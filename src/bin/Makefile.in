@@ -1,0 +1,40 @@
+EDIR	=	src/bin
+
+EINCLUDEDIRS	=	-Iinclude
+ELIBS	=	-Llib -lamc6821 -lpthread
+
+ECFLAGS	=	$(LCFLAGS) $(EINCLUDEDIRS)
+ELDFLAGS	=	$(LDFLAGS) $(ELIBS)
+
+ESRCS	=	$(wildcard $(EDIR)/*.c)
+EOBJS	=	$(ESRCS:.c=.o)
+EHDS	=	$(ESRCS:.c=.h)
+EDEPS	=	$(EOBJS:.o=.d)
+
+EXEC	=	bin/amc6821
+
+AllExecs: $(EXEC)
+
+$(EDEPS): %.d: %.c %.h $(ALLINCS)
+	@echo "Generating dependency file $@"
+	@set -e; rm -f $@
+	@$(CC) -M $(ECFLAGS) $< > $@.tmp
+	@sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.tmp > $@
+	@rm -f $@.tmp
+
+include $(EDEPS)
+
+$(EXEC): $(EOBJS)
+	$(CC) $(ECFLAGS) -o $@ $^ $(ELDFLAGS)
+
+$(EOBJS): %.o: %.c
+	$(CC) -c -o $@ $(ECFLAGS) $<
+
+clean: eclean
+eclean:
+	rm -f $(EDIR)/*.d
+	rm -f $(EDIR)/*.o
+
+clear: eclear
+eclear: eclean
+	rm -f $(EXEC)

@@ -1,0 +1,44 @@
+LDIR		=	src/lib
+
+LCFLAGS	=	$(CFLAGS)
+LLIBS		= 
+
+ALLINCS_ORIG	=	$(wildcard $(LDIR)/*.h)
+ALLINCS		=	$(addprefix include/,$(notdir $(ALLINCS_ORIG)))
+
+LSRCS		=	$(wildcard $(LDIR)/*.c)
+LOBJS		=	$(LSRCS:.c=.o) #LOBJS set by substituting .c extension in listed files by .o
+LDEPS		=	$(LOBJS:.o=.d)
+
+LIB		=	lib/libamc6821.so
+
+AllLibs: $(LIB) $(ALLINCS)
+
+$(LDEPS): %.d: %.c
+	@echo "Generating dependency file $@"
+	@set -e; rm -f $@
+	@$(CC) -M $(LCFLAGS) -MT $(<:.c=.o) $< > $@.tmp
+	@sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.tmp > $@
+	@rm -f $@.tmp
+
+include $(LDEPS)
+
+$(ALLINCS): include/%: $(LDIR)/%
+	mkdir -p include
+	cp $^ $@
+
+$(LIB): $(LOBJS)
+	$(CC) $(LCFLAGS) -fPIC -shared $(LDFLAGS) -o $@ $^ $(LLIBS)
+
+$(LOBJS): %.o: %.c
+	$(CC) -fPIC -c -o $@ $(LCFLAGS) $<
+
+clean: lclean
+lclean:
+	rm -f $(LDIR)/*.d
+	rm -f $(LDIR)/*.o
+
+clear: lclear
+lclear: lclean
+	rm -f $(LIB)
+	rm -rf include
