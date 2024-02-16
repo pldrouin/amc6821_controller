@@ -5,8 +5,8 @@
 
 #include "i2c.h"
 
-#define DEBUG_PRINT(...) fprintf(stderr, __VA_ARGS__)
-//#define DEBUG_PRINT(...)
+//#define DEBUG_PRINT(...) fprintf(stderr, __VA_ARGS__)
+#define DEBUG_PRINT(...)
 
 int i2c_init(struct amc6821_iic* iic)
 {
@@ -106,7 +106,9 @@ int i2c_write(struct amc6821_iic* iic, const uint8_t byte, const bool last)
 
 int i2c_write_many(struct amc6821_iic* iic, uint8_t const* bytes, const size_t nbytes, const bool last)
 {
-  DEBUG_PRINT("%s(%p, bytes=%p, nbytes=%lu, last=%u)\n", __func__, iic, bytes, nbytes, last);
+  DEBUG_PRINT("%s(%p, bytes=0x", __func__, iic);
+  for(int i=0; i<nbytes; ++i) DEBUG_PRINT("%02X", bytes[i]);
+  DEBUG_PRINT(", last=%u)\n", last);
   struct iiccmd cmd={0, nbytes, last, (char*)bytes};
 
   if(ioctl(iic->fid, I2CWRITE, &cmd)<0) {
@@ -138,6 +140,9 @@ int i2c_read_many(struct amc6821_iic* iic, uint8_t* bytes, const size_t nbytes, 
     fprintf(stderr, "%s: Error with I2C read (%i)\n", __func__, errno); 
     return AIE_READ_MANY_FAILED;
   }
+  DEBUG_PRINT("%s: 0x", __func__);
+  for(int i=0; i<nbytes; ++i) DEBUG_PRINT("%02X", bytes[i]);
+  DEBUG_PRINT(" was read\n");
   return AIE_OK;
 }
 

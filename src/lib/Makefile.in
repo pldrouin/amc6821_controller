@@ -1,6 +1,6 @@
 LDIR		=	src/lib
 
-LCFLAGS	=	$(CFLAGS)
+LCFLAGS	=	$(CFLAGS) -I$(LIBARGSDIR) -I$(LIBHTDIR)
 LLIBS		= 
 
 ALLINCS_ORIG	=	$(wildcard $(LDIR)/*.h)
@@ -27,7 +27,7 @@ $(ALLINCS): include/%: $(LDIR)/%
 	mkdir -p include
 	cp $^ $@
 
-$(LIB): $(LOBJS)
+$(LIB): $(LOBJS) $(LIBARGSDIR)/libargs.sa $(LIBHTDIR)/libht.sa
 	$(CC) $(LCFLAGS) -fPIC -shared $(LDFLAGS) -o $@ $^ $(LLIBS)
 
 $(LOBJS): %.o: %.c

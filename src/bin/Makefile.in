@@ -1,6 +1,6 @@
 EDIR	=	src/bin
 
-EINCLUDEDIRS	=	-Iinclude
+EINCLUDEDIRS	=	-Iinclude -I$(LIBARGSDIR) -I$(LIBHTDIR)
 ELIBS	=	-Llib -lamc6821 -lpthread
 
 ECFLAGS	=	$(LCFLAGS) $(EINCLUDEDIRS)
@@ -18,7 +18,7 @@ AllExecs: $(EXEC)
 $(EDEPS): %.d: %.c %.h $(ALLINCS)
 	@echo "Generating dependency file $@"
 	@set -e; rm -f $@
-	@$(CC) -M $(ECFLAGS) $< > $@.tmp
+	@$(CC) -M $(ECFLAGS) -MT $(<:.c=.o) $< > $@.tmp
 	@sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.tmp > $@
 	@rm -f $@.tmp
 
