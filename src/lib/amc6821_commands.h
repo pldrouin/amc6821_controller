@@ -3,7 +3,7 @@
 
 #include<string.h>
 
-#include "amc6821_smbus.h"
+#include "smbus.h"
 #include "amc6821_map.h"
 #include "amc6821_data_types.h"
 
