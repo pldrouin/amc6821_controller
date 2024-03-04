@@ -16,7 +16,7 @@ int amc6821_smbus_init(struct amc6821_smbus* smbus);
 int amc6821_smbus_open(struct amc6821_smbus* smbus, const char* device, const uint8_t dev_addr);
 int amc6821_smbus_mux_open(struct amc6821_smbus* smbus, const char* device, const uint8_t dev_addr, const uint8_t mux_addr, const uint8_t mux_reg_value, const uint8_t mux_reg_mask);
 static inline int amc6821_smbus_close(struct amc6821_smbus* smbus){return i2c_close(&smbus->iic);}
-static inline int amc6821_smbus_terminate(struct amc6821_smbus* smbus){return i2c_init(&smbus->iic);}
+static inline int amc6821_smbus_terminate(struct amc6821_smbus* smbus){return i2c_terminate(&smbus->iic);}
 
 int amc6821_smbus_send_byte(struct amc6821_smbus* smbus, const uint8_t reg);
 int amc6821_smbus_recv_byte(struct amc6821_smbus* smbus, uint8_t* value);
