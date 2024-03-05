@@ -2,6 +2,7 @@
 #include "amc6821_commands.h"
 
 #define AMC_DTYPE_DEFINE(id) {id ## _set, id ## _get}
+#define AMC_BIT(byte, bit) ((byte>>bit)&1)
 
 int uint8_set(uint8_t* const regs, void const* const data)
 {
@@ -36,12 +37,12 @@ int uint8_hex_print(void const* const data, FILE* stream)
 
 int uint8_bin_fmt(void const* const data, char* str, const size_t len)
 {
-  return snprintf(str, len, "%08b", *(uint8_t*)data);
+  return snprintf(str, len, "%u%u%u%u%u%u%u%u", AMC_BIT(*(uint8_t*)data, 7), AMC_BIT(*(uint8_t*)data, 6), AMC_BIT(*(uint8_t*)data, 5), AMC_BIT(*(uint8_t*)data, 4), AMC_BIT(*(uint8_t*)data, 3), AMC_BIT(*(uint8_t*)data, 2), AMC_BIT(*(uint8_t*)data, 1), AMC_BIT(*(uint8_t*)data, 0));
 }
 
 int uint8_bin_print(void const* const data, FILE* stream)
 {
-  return fprintf(stream, "%08b", *(uint8_t*)data);
+  return fprintf(stream, "%u%u%u%u%u%u%u%u", AMC_BIT(*(uint8_t*)data, 7), AMC_BIT(*(uint8_t*)data, 6), AMC_BIT(*(uint8_t*)data, 5), AMC_BIT(*(uint8_t*)data, 4), AMC_BIT(*(uint8_t*)data, 3), AMC_BIT(*(uint8_t*)data, 2), AMC_BIT(*(uint8_t*)data, 1), AMC_BIT(*(uint8_t*)data, 0));
 }
 
 int uint16_set(uint8_t* const regs, void const* const data)
@@ -63,6 +64,102 @@ int uint16_fmt(void const* const data, char* str, const size_t len)
 int uint16_print(void const* const data, FILE* stream)
 {
   return fprintf(stream, "%"PRIu16, *(const uint16_t*)data);
+}
+
+int conf1_fmt(void const* const data, char* str, const size_t len)
+{
+  int ret=uint8_bin_fmt(data, str, len);
+
+  if(AMC_BIT(*(uint8_t*)data, THERM_INT_EN)) ret+=snprintf(str+ret, len-ret, ",THERM_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, FDRC1)) ret+=snprintf(str+ret, len-ret, ",FDRC1");
+  if(AMC_BIT(*(uint8_t*)data, FDRC0)) ret+=snprintf(str+ret, len-ret, ",FDRC0");
+  if(AMC_BIT(*(uint8_t*)data, FAN_FAULT_EN)) ret+=snprintf(str+ret, len-ret, ",FAN_FAULT_EN");
+  if(AMC_BIT(*(uint8_t*)data, PWM_INVERT)) ret+=snprintf(str+ret, len-ret, ",PWM_INVERT");
+  if(AMC_BIT(*(uint8_t*)data, RPM_INT_EN)) ret+=snprintf(str+ret, len-ret, ",RPM_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, GLOBAL_INT_EN)) ret+=snprintf(str+ret, len-ret, ",GLOBAL_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, START_MONITOR)) ret+=snprintf(str+ret, len-ret, ",START_MONITOR");
+  return ret;
+}
+
+int conf1_print(void const* const data, FILE* stream)
+{
+  uint8_bin_print(data, stream);
+
+  if(AMC_BIT(*(uint8_t*)data, THERM_INT_EN)) fprintf(stream, ",THERM_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, FDRC1)) fprintf(stream, ",FDRC1");
+  if(AMC_BIT(*(uint8_t*)data, FDRC0)) fprintf(stream, ",FDRC0");
+  if(AMC_BIT(*(uint8_t*)data, FAN_FAULT_EN)) fprintf(stream, ",FAN_FAULT_EN");
+  if(AMC_BIT(*(uint8_t*)data, PWM_INVERT)) fprintf(stream, ",PWM_INVERT");
+  if(AMC_BIT(*(uint8_t*)data, RPM_INT_EN)) fprintf(stream, ",RPM_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, GLOBAL_INT_EN)) fprintf(stream, ",GLOBAL_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, START_MONITOR)) fprintf(stream, ",START_MONITOR");
+  return 0;
+}
+
+int conf2_fmt(void const* const data, char* str, const size_t len)
+{
+  int ret=uint8_bin_fmt(data, str, len);
+
+  if(AMC_BIT(*(uint8_t*)data, RESET)) ret+=snprintf(str+ret, len-ret, ",RESET");
+  if(AMC_BIT(*(uint8_t*)data, LPSV_INT_EN)) ret+=snprintf(str+ret, len-ret, ",LPSV_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, RT_INT_EN)) ret+=snprintf(str+ret, len-ret, ",RT_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, LT_INT_EN)) ret+=snprintf(str+ret, len-ret, ",LT_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, REMOTE_FAIL_INT_EN)) ret+=snprintf(str+ret, len-ret, ",REMOTE_FAIL_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, TACH_EN)) ret+=snprintf(str+ret, len-ret, ",TACH_EN");
+  if(AMC_BIT(*(uint8_t*)data, TACH_MODE)) ret+=snprintf(str+ret, len-ret, ",TACH_MODE");
+  if(AMC_BIT(*(uint8_t*)data, PWM_OUT_EN)) ret+=snprintf(str+ret, len-ret, ",PWM_OUT_EN");
+  return ret;
+}
+
+int conf2_print(void const* const data, FILE* stream)
+{
+  uint8_bin_print(data, stream);
+
+  if(AMC_BIT(*(uint8_t*)data, RESET)) fprintf(stream, ",RESET");
+  if(AMC_BIT(*(uint8_t*)data, LPSV_INT_EN)) fprintf(stream, ",LPSV_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, RT_INT_EN)) fprintf(stream, ",RT_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, LT_INT_EN)) fprintf(stream, ",LT_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, REMOTE_FAIL_INT_EN)) fprintf(stream, ",REMOTE_FAIL_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, TACH_EN)) fprintf(stream, ",TACH_EN");
+  if(AMC_BIT(*(uint8_t*)data, TACH_MODE)) fprintf(stream, ",TACH_MODE");
+  if(AMC_BIT(*(uint8_t*)data, PWM_OUT_EN)) fprintf(stream, ",PWM_OUT_EN");
+  return 0;
+}
+
+int conf3_fmt(void const* const data, char* str, const size_t len)
+{
+  int ret=uint8_bin_fmt(data, str, len);
+
+  if(AMC_BIT(*(uint8_t*)data, THERM_FAN_EN)) ret+=snprintf(str+ret, len-ret, ",THERM_FAN_EN");
+  return ret;
+}
+
+int conf3_print(void const* const data, FILE* stream)
+{
+  uint8_bin_print(data, stream);
+
+  if(AMC_BIT(*(uint8_t*)data, THERM_FAN_EN)) fprintf(stream, ",THERM_FAN_EN");
+  return 0;
+}
+
+int conf4_fmt(void const* const data, char* str, const size_t len)
+{
+  int ret=uint8_bin_fmt(data, str, len);
+
+  if(AMC_BIT(*(uint8_t*)data, PULSE_NUMBER)) ret+=snprintf(str+ret, len-ret, ",PULSE_NUMBER");
+  if(AMC_BIT(*(uint8_t*)data, TACH_FAST)) ret+=snprintf(str+ret, len-ret, ",TACH_FAST");
+  if(AMC_BIT(*(uint8_t*)data, OVR_PIN_EN)) ret+=snprintf(str+ret, len-ret, ",OVR_PIN_EN");
+  return ret;
+}
+
+int conf4_print(void const* const data, FILE* stream)
+{
+  uint8_bin_print(data, stream);
+
+  if(AMC_BIT(*(uint8_t*)data, PULSE_NUMBER)) fprintf(stream, ",PULSE_NUMBER");
+  if(AMC_BIT(*(uint8_t*)data, TACH_FAST)) fprintf(stream, ",TACH_FAST");
+  if(AMC_BIT(*(uint8_t*)data, OVR_PIN_EN)) fprintf(stream, ",OVR_PIN_EN");
+  return 0;
 }
 
 int fan_control_set(uint8_t* const regs, void const* const data)
@@ -365,11 +462,8 @@ int temp_low_res_print(void const* const data, FILE* stream)
 
 const struct amc_dtype amc_dtypes[AMC_NDTYPES]={
   AMC_DTYPE_DEFINE(uint8),  			//AMC_UINT8_DTYPE
-  AMC_DTYPE_DEFINE(uint8), 			//AMC_UINT8_HEX_DTYPE
-  AMC_DTYPE_DEFINE(uint8), 			//AMC_UINT8_BIN_DTYPE
   AMC_DTYPE_DEFINE(uint16),			//AMC_UINT16_DTYPE
   AMC_DTYPE_DEFINE(fan_control),		//AMC_FAN_CONTROL_DTYPE
   AMC_DTYPE_DEFINE(dcy_ramp),			//AMC_DCY_RAMP_DTYPE
-  AMC_DTYPE_DEFINE(uint16),			//AMC_TACH_DTYPE
   AMC_DTYPE_DEFINE(uint8),			//AMC_TEMP_LOW_RES_DTYPE
 };

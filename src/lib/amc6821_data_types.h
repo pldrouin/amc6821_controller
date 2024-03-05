@@ -74,23 +74,17 @@ struct dcy_ramp_data {
   enum dcy_ramp_threshold threshold;
 };
 
-#define AMC_NDTYPES			8
+#define AMC_NDTYPES			5
 
 #define AMC_UINT8_DTYPE_IDX		0
 #define AMC_UINT8_DTYPE_DECODED		uint8_t
-#define AMC_UINT8_HEX_DTYPE_IDX		1
-#define AMC_UINT8_HEX_DTYPE_DECODED	uint8_t
-#define AMC_UINT8_BIN_DTYPE_IDX		2
-#define AMC_UINT8_BIN_DTYPE_DECODED	uint8_t
-#define AMC_UINT16_DTYPE_IDX		3
+#define AMC_UINT16_DTYPE_IDX		1
 #define AMC_UINT16_DTYPE_DECODED	uint16_t
-#define AMC_FAN_CONTROL_DTYPE_IDX	4
+#define AMC_FAN_CONTROL_DTYPE_IDX	2
 #define AMC_FAN_CONTROL_DTYPE_DECODED	struct fan_control_data
-#define AMC_DCY_RAMP_DTYPE_IDX		5
+#define AMC_DCY_RAMP_DTYPE_IDX		3
 #define AMC_DCY_RAMP_DTYPE_DECODED	struct dcy_ramp_data
-#define AMC_TACH_DTYPE_IDX		6
-#define AMC_TACH_DTYPE_DECODED		uint16_t
-#define AMC_TEMP_LOW_RES_DTYPE_IDX	7
+#define AMC_TEMP_LOW_RES_DTYPE_IDX	4
 #define AMC_TEMP_LOW_RES_DTYPE_DECODED	int8_t
 
 extern const struct amc_dtype amc_dtypes[AMC_NDTYPES];
@@ -103,6 +97,14 @@ int uint8_bin_fmt(void const* const data, char* str, const size_t len);
 int uint8_bin_print(void const* const data, FILE* stream);
 int uint16_fmt(void const* const data, char* str, const size_t len);
 int uint16_print(void const* const data, FILE* stream);
+int conf1_fmt(void const* const data, char* str, const size_t len);
+int conf1_print(void const* const data, FILE* stream);
+int conf2_fmt(void const* const data, char* str, const size_t len);
+int conf2_print(void const* const data, FILE* stream);
+int conf3_fmt(void const* const data, char* str, const size_t len);
+int conf3_print(void const* const data, FILE* stream);
+int conf4_fmt(void const* const data, char* str, const size_t len);
+int conf4_print(void const* const data, FILE* stream);
 int fan_control_fmt(void const* const data, char* str, const size_t len);
 int fan_control_print(void const* const data, FILE* stream);
 int dcy_ramp_fmt(void const* const data, char* str, const size_t len);

@@ -20,6 +20,7 @@
 #define AIE_WRITE_MANY_FAILED -10
 #define AIE_READ_FAILED -11
 #define AIE_READ_MANY_FAILED -12
+#define AIE_READ_WRITE_FAILED -13
 
 #define AIE_CHECK_ADDR(ADDR) ({if(ADDR&(1<<7)) {fprintf(stderr, "%s: Error: Invalid I2C address (%" PRIu8 ")\n", __func__, ADDR); return AIE_INVALID_ADDR;}})
 

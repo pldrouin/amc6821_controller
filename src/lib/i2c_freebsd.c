@@ -18,6 +18,12 @@ int i2c_init(struct amc6821_iic* iic)
 int i2c_open(struct amc6821_iic* iic, const char* device)
 {
   DEBUG_PRINT("%s(%p, device=\"%s\")\n", __func__, iic, device);
+
+  if(iic->fid >= 0) {
+    fprintf(stderr, "%s: A device is already opened!\n", __func__); 
+    return AIE_OPEN_FAILED;
+  }
+
   iic->fid = open("/dev/iic0", O_RDWR);
 
   if(iic->fid < 0) {

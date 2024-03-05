@@ -54,12 +54,46 @@ int config_get_ ## funct_id(struct amc6821_config* config) {\
 
 int config_help(struct amc6821_config* config)
 {
-  printf(BSTR "config" UBSTR " configuration_file\n"); 
-  printf(BSTR "olog" UBSTR " output_log_file\n"); 
-  printf(BSTR "elog" UBSTR " error_log_file\n"); 
-  printf(BSTR "prompt" UBSTR "\n"); 
+  printf(BSTR "config                     " UBSTR " configuration_file|-\n"); 
+  printf(BSTR "olog                       " UBSTR " output_log_file\n"); 
+  printf(BSTR "elog                       " UBSTR " error_log_file\n"); 
+  printf(BSTR "prompt                     " UBSTR "\n"); 
 
-  printf(BSTR "exit" UBSTR "\n"); 
+  printf(BSTR "open                       " UBSTR " device_path dev_i2c_hex_addr\n"); 
+  printf(BSTR "mux_open                   " UBSTR " device_path dev_i2c_hex_addr mux_i2c_hex_addr mux_reg_hex_val mux_reg_hex_mask\n"); 
+
+  printf(BSTR "get_conf1                  " UBSTR "\n"); 
+  printf(BSTR "modify_conf1               " UBSTR " [[NO_]THERM_INT_EN],[[NO_]FDRC1],[[NO_]FDRC0],[[NO_]FAN_FAULT_EN],[[NO_]PWM_INVERT],[[NO_]RPM_INT_EN],[[NO_]GLOBAL_INT_EN],[[NO_]START_MONITOR]\n"); 
+
+  printf(BSTR "get_conf2                  " UBSTR "\n"); 
+  printf(BSTR "modify_conf2               " UBSTR " [[NO_]RESET],[[NO_]LPSV_INT_EN],[[NO_]RT_INT_EN],[[NO_]LT_INT_EN],[[NO_]REMOTE_FAIL_INT_EN],[[NO_]TACH_EN],[[NO_]TACH_MODE],[[NO_]PWM_OUT_EN]\n"); 
+
+  printf(BSTR "get_conf3                  " UBSTR "\n"); 
+  printf(BSTR "modify_conf3               " UBSTR " [[NO_]THERM_FAN_EN],[[NO_]NO_THERM_FAN_EN]\n"); 
+
+  printf(BSTR "get_conf4                  " UBSTR "\n"); 
+  printf(BSTR "modify_conf4               " UBSTR " [[NO_]PULSE_NUMBER],[[NO_]TACH_FAST],[[NO_]OVR_PIN_EN]\n"); 
+
+  printf(BSTR "get_dcy                    " UBSTR "\n"); 
+  printf(BSTR "set_dcy                    " UBSTR " 0-255\n"); 
+
+  printf(BSTR "get_dcy_low_temp           " UBSTR "\n"); 
+  printf(BSTR "set_dcy_low_temp           " UBSTR " 0-255\n"); 
+
+  printf(BSTR "get_local_temp_fan_control " UBSTR "\n"); 
+  printf(BSTR "set_local_temp_fan_control " UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
+
+  printf(BSTR "get_remote_temp_fan_control" UBSTR "\n"); 
+  printf(BSTR "set_remote_temp_fan_control" UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
+
+  printf(BSTR "get_dcy_ramp               " UBSTR "\n"); 
+  printf(BSTR "set_dcy_ramp               " UBSTR " enabled|disabled 1|2|4|8 (dcy stemp) 0.0625|0.125|0.25|0.5|1|2|4|8 (s dcy ramp rate) 1|2|3|4 (dcy threshold)\n"); 
+
+  printf(BSTR "get_tach                   " UBSTR "\n"); 
+  printf(BSTR "get_local_temp_low_res     " UBSTR "\n"); 
+  printf(BSTR "get_remote_temp_low_res    " UBSTR "\n"); 
+
+  printf(BSTR "exit                       " UBSTR "\n"); 
   return 0;
 }
 
@@ -297,28 +331,28 @@ int _config_modify_conf(struct amc6821_config* config, const uint8_t htcidx, int
   return 0;
 }
 
-CONFIG_RW_GET_RESTORE_FUNCTS(conf1, uint8_t, uint8_bin);
+CONFIG_RW_GET_RESTORE_FUNCTS(conf1, uint8_t, conf1);
 
 int config_modify_conf1(struct amc6821_config* config)
 {
   return _config_modify_conf(config, 0, amc6821_load_conf1, amc6821_store_conf1);
 }
 
-CONFIG_RW_GET_RESTORE_FUNCTS(conf2, uint8_t, uint8_bin);
+CONFIG_RW_GET_RESTORE_FUNCTS(conf2, uint8_t, conf2);
 
 int config_modify_conf2(struct amc6821_config* config)
 {
   return _config_modify_conf(config, 1, amc6821_load_conf2, amc6821_store_conf2);
 }
 
-CONFIG_RW_GET_RESTORE_FUNCTS(conf3, uint8_t, uint8_bin);
+CONFIG_RW_GET_RESTORE_FUNCTS(conf3, uint8_t, conf3);
 
 int config_modify_conf3(struct amc6821_config* config)
 {
   return _config_modify_conf(config, 2, amc6821_load_conf3, amc6821_store_conf3);
 }
 
-CONFIG_RW_GET_RESTORE_FUNCTS(conf4, uint8_t, uint8_bin);
+CONFIG_RW_GET_RESTORE_FUNCTS(conf4, uint8_t, conf4);
 
 int config_modify_conf4(struct amc6821_config* config)
 {
