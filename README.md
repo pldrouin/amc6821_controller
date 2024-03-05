@@ -7,6 +7,10 @@ https://github.com/pldrouin/libargs .
 To compile, the LIBHTDIR and LIBARGSDIR variables (through environment or make) must respectively
 point to the installation directories of the two dependencies.
 
+Defining the SHARED variable generates a shared library and a matching
+executable, while otherwise a static library is generated with a corresponding
+executable.
+
 On a LX2160A system, an automatic mode can be configured using
 examples/lx2160a_auto.conf . This automatic mode can be configured, and the fan
 duty cycle, fan RPM as well as the local and remote temperatures can be queried.

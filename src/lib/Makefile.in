@@ -1,24 +1,27 @@
 LDIR		=	src/lib
 
 LCFLAGS	=	$(CFLAGS) -I$(LIBARGSDIR) -I$(LIBHTDIR)
+STCOM		=	ar rcs
 LLIBS		= 
 
 ALLINCS_ORIG	=	$(wildcard $(LDIR)/*.h)
 ALLINCS		=	$(addprefix include/,$(notdir $(ALLINCS_ORIG)))
 
 LSRCS		=	$(wildcard $(LDIR)/*.c)
-LOBJS		=	$(LSRCS:.c=.o) #LOBJS set by substituting .c extension in listed files by .o
+LOBJS		=	$(LSRCS:.c=.o)
+LOBJSS		=	$(LSRCS:.c=.os)
 LDEPS		=	$(LOBJS:.o=.d)
 
 LIB		=	lib/libamc6821.so
+STLIB		=	lib/libamc6821.a
 
-AllLibs: $(LIB) $(ALLINCS)
+AllLibs: $(LIB) $(STLIB) $(ALLINCS)
 
 $(LDEPS): %.d: %.c
 	@echo "Generating dependency file $@"
 	@set -e; rm -f $@
 	@$(CC) -M $(LCFLAGS) -MT $(<:.c=.o) $< > $@.tmp
-	@sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.tmp > $@
+	@sed 's,\($*\)\.o[ :]*,\1.o \1.os $@ : ,g' < $@.tmp > $@
 	@rm -f $@.tmp
 
 include $(LDEPS)
@@ -30,15 +33,23 @@ $(ALLINCS): include/%: $(LDIR)/%
 $(LIB): $(LOBJS) $(LIBARGSDIR)/libargs.sa $(LIBHTDIR)/libht.sa
 	$(CC) $(LCFLAGS) -fPIC -shared $(LDFLAGS) -o $@ $^ $(LLIBS)
 
+$(STLIB):  $(LOBJSS)
+	rm -rf $@ && $(STCOM) $@ $^
+
 $(LOBJS): %.o: %.c
 	$(CC) -fPIC -c -o $@ $(LCFLAGS) $<
+
+$(LOBJSS): %.os: %.c
+	$(CC) -c -o $@ $(LCFLAGS) $<
 
 clean: lclean
 lclean:
 	rm -f $(LDIR)/*.d
 	rm -f $(LDIR)/*.o
+	rm -f $(LDIR)/*.os
 
 clear: lclear
 lclear: lclean
-	rm -f $(LIB)
+	rm -f $(LIB) $(STLIB)
 	rm -rf include
+	rm -rf $(EDIR)/.sentinel

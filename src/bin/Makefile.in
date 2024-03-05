@@ -1,7 +1,7 @@
 EDIR	=	src/bin
 
 EINCLUDEDIRS	=	-Iinclude -I$(LIBARGSDIR) -I$(LIBHTDIR)
-ELIBS	=	-Llib -lamc6821 -lpthread
+ELIBS	=	-Llib -lamc6821
 
 ECFLAGS	=	$(LCFLAGS) $(EINCLUDEDIRS)
 ELDFLAGS	=	$(LDFLAGS) $(ELIBS)
@@ -15,6 +15,18 @@ EXEC	=	bin/amc6821
 
 AllExecs: $(EXEC)
 
+ifdef SHARED
+$(EXEC): $(EOBJS) $(EDIR)/.sentinel
+	$(CC) $(ECFLAGS) -o $@ $(EOBJS) $(ELDFLAGS)
+$(EDIR)/.sentinel: $(LIB)
+	@if [ ! -f $@ ]; then \
+		touch $@; \
+	fi
+else
+$(EXEC): $(EOBJS) $(STLIB) $(LIBARGSDIR)/libargs.a $(LIBHTDIR)/libht.a
+	$(CC) $(ECFLAGS) -o $@ $^
+endif
+
 $(EDEPS): %.d: %.c %.h $(ALLINCS)
 	@echo "Generating dependency file $@"
 	@set -e; rm -f $@
@@ -23,9 +35,7 @@ $(EDEPS): %.d: %.c %.h $(ALLINCS)
 	@rm -f $@.tmp
 
 include $(EDEPS)
-
-$(EXEC): $(EOBJS)
-	$(CC) $(ECFLAGS) -o $@ $^ $(ELDFLAGS)
+	
 
 $(EOBJS): %.o: %.c
 	$(CC) -c -o $@ $(ECFLAGS) $<

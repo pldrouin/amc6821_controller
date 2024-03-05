@@ -249,13 +249,9 @@ int dcy_ramp_fmt(void const* const data, char* str, const size_t len)
   struct dcy_ramp_data const* const drd = (struct dcy_ramp_data const*)data;
   int ret;
 
-  switch(drd->enabled) {
-    case true:
-      ret=snprintf(str, len, "enabled, ");
-      break;
-    case false:
-      ret=snprintf(str, len, "disabled, ");
-  }
+  if(drd->enabled) ret=snprintf(str, len, "enabled, ");
+
+  else ret=snprintf(str, len, "disabled, ");
 
   if(ret<len) {
 
