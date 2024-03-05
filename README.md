@@ -18,4 +18,4 @@ For example, if the fan controller slave address is 0x18,
 the mux slave's address is 0x77 and the fan controller is selected on the mux using
 register value 0x9:
 
-amc6821 --mux_open /dev/iic0 0x18 0x77 0x9 0xF --config examples/lx2160a_auto.conf --get_dcy --get_tach --get_local_temp_low_res --get_remote_temp_low_res
+amc6821 --mux_open /dev/iic0 0x18 0x77 0x9 0xF --config examples/lx2160a_auto.conf --get_dcy --get_tach --get_local_remote_temp_high_res
