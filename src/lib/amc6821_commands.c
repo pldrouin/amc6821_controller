@@ -135,6 +135,33 @@ int _amc6821_ro_multiple_regs_load(struct amc6821_device* dev, const uint8_t reg
   return 0;
 }
 
+int amc6821_load_local_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data)
+{
+  int ret;
+  uint8_t cur_regs[2];
+
+  if((ret=smbus_read_byte(&dev->smbus, AMC_TEMP_DATA_LBYTE_REG, cur_regs))) return ret;
+
+  if((ret=smbus_read_byte(&dev->smbus, AMC_LOCAL_TEMP_DATA_HBYTE_REG, cur_regs+1))) return ret;
+  amc_dtypes[AMC_LOCAL_TEMP_HIGH_RES_DTYPE_IDX].get_func(cur_regs, data);
+
+  if((ret=smbus_read_byte(&dev->smbus, AMC_REMOTE_TEMP_DATA_HBYTE_REG, cur_regs+1))) return ret;
+  amc_dtypes[AMC_REMOTE_TEMP_HIGH_RES_DTYPE_IDX].get_func(cur_regs, data+1);
+  return 0;
+}
+
+int amc6821_load_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data)
+{
+  int ret;
+  uint8_t cur_regs[2];
+
+  if((ret=smbus_read_byte(&dev->smbus, AMC_TEMP_DATA_LBYTE_REG, cur_regs))) return ret;
+
+  if((ret=smbus_read_byte(&dev->smbus, AMC_REMOTE_TEMP_DATA_HBYTE_REG, cur_regs+1))) return ret;
+  amc_dtypes[AMC_REMOTE_TEMP_HIGH_RES_DTYPE_IDX].get_func(cur_regs, data);
+  return 0;
+}
+
 int amc6821_init(struct amc6821_device* dev)
 {
   memset(dev->amc_rw_regs_initialized, 0, (AMC_N_RW_REGS+7)>>3);

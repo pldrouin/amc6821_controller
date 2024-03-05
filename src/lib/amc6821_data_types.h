@@ -74,7 +74,7 @@ struct dcy_ramp_data {
   enum dcy_ramp_threshold threshold;
 };
 
-#define AMC_NDTYPES			5
+#define AMC_NDTYPES			7
 
 #define AMC_UINT8_DTYPE_IDX		0
 #define AMC_UINT8_DTYPE_DECODED		uint8_t
@@ -86,6 +86,10 @@ struct dcy_ramp_data {
 #define AMC_DCY_RAMP_DTYPE_DECODED	struct dcy_ramp_data
 #define AMC_TEMP_LOW_RES_DTYPE_IDX	4
 #define AMC_TEMP_LOW_RES_DTYPE_DECODED	int8_t
+#define AMC_REMOTE_TEMP_HIGH_RES_DTYPE_IDX	5
+#define AMC_REMOTE_TEMP_HIGH_RES_DTYPE_DECODED	int16_t
+#define AMC_LOCAL_TEMP_HIGH_RES_DTYPE_IDX	6
+#define AMC_LOCAL_TEMP_HIGH_RES_DTYPE_DECODED	int16_t
 
 extern const struct amc_dtype amc_dtypes[AMC_NDTYPES];
 
@@ -105,6 +109,10 @@ int conf3_fmt(void const* const data, char* str, const size_t len);
 int conf3_print(void const* const data, FILE* stream);
 int conf4_fmt(void const* const data, char* str, const size_t len);
 int conf4_print(void const* const data, FILE* stream);
+int status1_fmt(void const* const data, char* str, const size_t len);
+int status1_print(void const* const data, FILE* stream);
+int status2_fmt(void const* const data, char* str, const size_t len);
+int status2_print(void const* const data, FILE* stream);
 int fan_control_fmt(void const* const data, char* str, const size_t len);
 int fan_control_print(void const* const data, FILE* stream);
 int dcy_ramp_fmt(void const* const data, char* str, const size_t len);
@@ -113,5 +121,7 @@ int tach_fmt(void const* const data, char* str, const size_t len);
 int tach_print(void const* const data, FILE* stream);
 int temp_low_res_fmt(void const* const data, char* str, const size_t len);
 int temp_low_res_print(void const* const data, FILE* stream);
+int temp_high_res_fmt(void const* const data, char* str, const size_t len);
+int temp_high_res_print(void const* const data, FILE* stream);
 
 #endif

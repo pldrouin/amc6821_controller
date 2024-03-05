@@ -2,6 +2,7 @@
 #include "amc6821_commands.h"
 
 #define AMC_DTYPE_DEFINE(id) {id ## _set, id ## _get}
+#define AMC_DTYPE_RO_DEFINE(id) {NULL, id ## _get}
 #define AMC_BIT(byte, bit) ((byte>>bit)&1)
 
 int uint8_set(uint8_t* const regs, void const* const data)
@@ -159,6 +160,60 @@ int conf4_print(void const* const data, FILE* stream)
   if(AMC_BIT(*(uint8_t*)data, PULSE_NUMBER)) fprintf(stream, ",PULSE_NUMBER");
   if(AMC_BIT(*(uint8_t*)data, TACH_FAST)) fprintf(stream, ",TACH_FAST");
   if(AMC_BIT(*(uint8_t*)data, OVR_PIN_EN)) fprintf(stream, ",OVR_PIN_EN");
+  return 0;
+}
+
+int status1_fmt(void const* const data, char* str, const size_t len)
+{
+  int ret=uint8_bin_fmt(data, str, len);
+
+  if(AMC_BIT(*(uint8_t*)data, LT_LOW)) ret+=snprintf(str+ret, len-ret, ",LT_LOW");
+  if(AMC_BIT(*(uint8_t*)data, LT_HIGH)) ret+=snprintf(str+ret, len-ret, ",LT_HIGH");
+  if(AMC_BIT(*(uint8_t*)data, RT_FAIL)) ret+=snprintf(str+ret, len-ret, ",RT_FAIL");
+  if(AMC_BIT(*(uint8_t*)data, RT_OVER_THERM)) ret+=snprintf(str+ret, len-ret, ",RT_OVER_THERM");
+  if(AMC_BIT(*(uint8_t*)data, RT_LOW)) ret+=snprintf(str+ret, len-ret, ",RT_LOW");
+  if(AMC_BIT(*(uint8_t*)data, RT_HIGH)) ret+=snprintf(str+ret, len-ret, ",RT_HIGH");
+  if(AMC_BIT(*(uint8_t*)data, FAN_SLOW)) ret+=snprintf(str+ret, len-ret, ",FAN_SLOW");
+  if(AMC_BIT(*(uint8_t*)data, FAN_FAST)) ret+=snprintf(str+ret, len-ret, ",FAN_FAST");
+  return ret;
+}
+
+int status1_print(void const* const data, FILE* stream)
+{
+  uint8_bin_print(data, stream);
+
+  if(AMC_BIT(*(uint8_t*)data, LT_LOW)) fprintf(stream, ",LT_LOW");
+  if(AMC_BIT(*(uint8_t*)data, LT_HIGH)) fprintf(stream, ",LT_HIGH");
+  if(AMC_BIT(*(uint8_t*)data, RT_FAIL)) fprintf(stream, ",RT_FAIL");
+  if(AMC_BIT(*(uint8_t*)data, RT_OVER_THERM)) fprintf(stream, ",RT_OVER_THERM");
+  if(AMC_BIT(*(uint8_t*)data, RT_LOW)) fprintf(stream, ",RT_LOW");
+  if(AMC_BIT(*(uint8_t*)data, RT_HIGH)) fprintf(stream, ",RT_HIGH");
+  if(AMC_BIT(*(uint8_t*)data, FAN_SLOW)) fprintf(stream, ",FAN_SLOW");
+  if(AMC_BIT(*(uint8_t*)data, FAN_FAST)) fprintf(stream, ",FAN_FAST");
+  return 0;
+}
+
+int status2_fmt(void const* const data, char* str, const size_t len)
+{
+  int ret=uint8_bin_fmt(data, str, len);
+
+  if(AMC_BIT(*(uint8_t*)data, THERM_INPUT)) ret+=snprintf(str+ret, len-ret, ",THERM_INPUT");
+  if(AMC_BIT(*(uint8_t*)data, LT_OVER_THERM)) ret+=snprintf(str+ret, len-ret, ",LT_OVER_THERM");
+  if(AMC_BIT(*(uint8_t*)data, LT_BELOW_THERM)) ret+=snprintf(str+ret, len-ret, ",LT_BELOW_THERM");
+  if(AMC_BIT(*(uint8_t*)data, LT_OVER_CRIT)) ret+=snprintf(str+ret, len-ret, ",LT_OVER_CRIT");
+  if(AMC_BIT(*(uint8_t*)data, RT_OVER_CRIT)) ret+=snprintf(str+ret, len-ret, ",RT_OVER_CRIT");
+  return ret;
+}
+
+int status2_print(void const* const data, FILE* stream)
+{
+  uint8_bin_print(data, stream);
+
+  if(AMC_BIT(*(uint8_t*)data, THERM_INPUT)) fprintf(stream, ",THERM_INPUT");
+  if(AMC_BIT(*(uint8_t*)data, LT_OVER_THERM)) fprintf(stream, ",LT_OVER_THERM");
+  if(AMC_BIT(*(uint8_t*)data, LT_BELOW_THERM)) fprintf(stream, ",LT_BELOW_THERM");
+  if(AMC_BIT(*(uint8_t*)data, LT_OVER_CRIT)) fprintf(stream, ",LT_OVER_CRIT");
+  if(AMC_BIT(*(uint8_t*)data, RT_OVER_CRIT)) fprintf(stream, ",RT_OVER_CRIT");
   return 0;
 }
 
@@ -456,10 +511,32 @@ int temp_low_res_print(void const* const data, FILE* stream)
   return fprintf(stream, "%"PRIi8" C", *(int8_t const*)data);
 }
 
+void remote_temp_high_res_get(uint8_t const* const regs, void* const data)
+{
+  *(uint16_t*)data = (((int16_t)regs[1])<<3) | ((regs[0]>>REMOTE_TEMP_LBITS)&0b111);
+}
+
+void local_temp_high_res_get(uint8_t const* const regs, void* const data)
+{
+  *(uint16_t*)data = (((int16_t)regs[1])<<3) | ((regs[0]>>LOCAL_TEMP_LBITS)&0b111);
+}
+
+int temp_high_res_fmt(void const* const data, char* str, const size_t len)
+{
+  return snprintf(str, len, "%.3f C", *(int16_t const*)data/8.);
+}
+
+int temp_high_res_print(void const* const data, FILE* stream)
+{
+  return fprintf(stream, "%.3f C", *(int16_t const*)data/8.);
+}
+
 const struct amc_dtype amc_dtypes[AMC_NDTYPES]={
   AMC_DTYPE_DEFINE(uint8),  			//AMC_UINT8_DTYPE
   AMC_DTYPE_DEFINE(uint16),			//AMC_UINT16_DTYPE
   AMC_DTYPE_DEFINE(fan_control),		//AMC_FAN_CONTROL_DTYPE
   AMC_DTYPE_DEFINE(dcy_ramp),			//AMC_DCY_RAMP_DTYPE
   AMC_DTYPE_DEFINE(uint8),			//AMC_TEMP_LOW_RES_DTYPE
+  AMC_DTYPE_RO_DEFINE(remote_temp_high_res),	//AMC_REMOTE_TEMP_HIGH_RES_DTYPE
+  AMC_DTYPE_RO_DEFINE(local_temp_high_res),	//AMC_LOCAL_TEMP_HIGH_RES_DTYPE
 };

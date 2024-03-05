@@ -54,46 +54,51 @@ int config_get_ ## funct_id(struct amc6821_config* config) {\
 
 int config_help(struct amc6821_config* config)
 {
-  printf(BSTR "config                     " UBSTR " configuration_file|-\n"); 
-  printf(BSTR "olog                       " UBSTR " output_log_file\n"); 
-  printf(BSTR "elog                       " UBSTR " error_log_file\n"); 
-  printf(BSTR "prompt                     " UBSTR "\n"); 
+  printf(BSTR "config                        " UBSTR " configuration_file|-\n"); 
+  printf(BSTR "olog                          " UBSTR " output_log_file\n"); 
+  printf(BSTR "elog                          " UBSTR " error_log_file\n"); 
+  printf(BSTR "prompt                        " UBSTR "\n"); 
 
-  printf(BSTR "open                       " UBSTR " device_path dev_i2c_hex_addr\n"); 
-  printf(BSTR "mux_open                   " UBSTR " device_path dev_i2c_hex_addr mux_i2c_hex_addr mux_reg_hex_val mux_reg_hex_mask\n"); 
+  printf(BSTR "open                          " UBSTR " device_path dev_i2c_hex_addr\n"); 
+  printf(BSTR "mux_open                      " UBSTR " device_path dev_i2c_hex_addr mux_i2c_hex_addr mux_reg_hex_val mux_reg_hex_mask\n"); 
 
-  printf(BSTR "get_conf1                  " UBSTR "\n"); 
-  printf(BSTR "modify_conf1               " UBSTR " [[NO_]THERM_INT_EN],[[NO_]FDRC1],[[NO_]FDRC0],[[NO_]FAN_FAULT_EN],[[NO_]PWM_INVERT],[[NO_]RPM_INT_EN],[[NO_]GLOBAL_INT_EN],[[NO_]START_MONITOR]\n"); 
+  printf(BSTR "get_conf1                     " UBSTR "\n"); 
+  printf(BSTR "modify_conf1                  " UBSTR " [[NO_]THERM_INT_EN],[[NO_]FDRC1],[[NO_]FDRC0],[[NO_]FAN_FAULT_EN],[[NO_]PWM_INVERT],[[NO_]RPM_INT_EN],[[NO_]GLOBAL_INT_EN],[[NO_]START_MONITOR]\n"); 
 
-  printf(BSTR "get_conf2                  " UBSTR "\n"); 
-  printf(BSTR "modify_conf2               " UBSTR " [[NO_]RESET],[[NO_]LPSV_INT_EN],[[NO_]RT_INT_EN],[[NO_]LT_INT_EN],[[NO_]REMOTE_FAIL_INT_EN],[[NO_]TACH_EN],[[NO_]TACH_MODE],[[NO_]PWM_OUT_EN]\n"); 
+  printf(BSTR "get_conf2                     " UBSTR "\n"); 
+  printf(BSTR "modify_conf2                  " UBSTR " [[NO_]RESET],[[NO_]LPSV_INT_EN],[[NO_]RT_INT_EN],[[NO_]LT_INT_EN],[[NO_]REMOTE_FAIL_INT_EN],[[NO_]TACH_EN],[[NO_]TACH_MODE],[[NO_]PWM_OUT_EN]\n"); 
 
-  printf(BSTR "get_conf3                  " UBSTR "\n"); 
-  printf(BSTR "modify_conf3               " UBSTR " [[NO_]THERM_FAN_EN],[[NO_]NO_THERM_FAN_EN]\n"); 
+  printf(BSTR "get_conf3                     " UBSTR "\n"); 
+  printf(BSTR "modify_conf3                  " UBSTR " [[NO_]THERM_FAN_EN],[[NO_]NO_THERM_FAN_EN]\n"); 
 
-  printf(BSTR "get_conf4                  " UBSTR "\n"); 
-  printf(BSTR "modify_conf4               " UBSTR " [[NO_]PULSE_NUMBER],[[NO_]TACH_FAST],[[NO_]OVR_PIN_EN]\n"); 
+  printf(BSTR "get_conf4                     " UBSTR "\n"); 
+  printf(BSTR "modify_conf4                  " UBSTR " [[NO_]PULSE_NUMBER],[[NO_]TACH_FAST],[[NO_]OVR_PIN_EN]\n"); 
 
-  printf(BSTR "get_dcy                    " UBSTR "\n"); 
-  printf(BSTR "set_dcy                    " UBSTR " 0-255\n"); 
+  printf(BSTR "get_dcy                       " UBSTR "\n"); 
+  printf(BSTR "set_dcy                       " UBSTR " 0-255\n"); 
 
-  printf(BSTR "get_dcy_low_temp           " UBSTR "\n"); 
-  printf(BSTR "set_dcy_low_temp           " UBSTR " 0-255\n"); 
+  printf(BSTR "get_dcy_low_temp              " UBSTR "\n"); 
+  printf(BSTR "set_dcy_low_temp              " UBSTR " 0-255\n"); 
 
-  printf(BSTR "get_local_temp_fan_control " UBSTR "\n"); 
-  printf(BSTR "set_local_temp_fan_control " UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
+  printf(BSTR "get_local_temp_fan_control    " UBSTR "\n"); 
+  printf(BSTR "set_local_temp_fan_control    " UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
 
-  printf(BSTR "get_remote_temp_fan_control" UBSTR "\n"); 
-  printf(BSTR "set_remote_temp_fan_control" UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
+  printf(BSTR "get_remote_temp_fan_control   " UBSTR "\n"); 
+  printf(BSTR "set_remote_temp_fan_control   " UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
 
-  printf(BSTR "get_dcy_ramp               " UBSTR "\n"); 
-  printf(BSTR "set_dcy_ramp               " UBSTR " enabled|disabled 1|2|4|8 (dcy stemp) 0.0625|0.125|0.25|0.5|1|2|4|8 (s dcy ramp rate) 1|2|3|4 (dcy threshold)\n"); 
+  printf(BSTR "get_dcy_ramp                  " UBSTR "\n"); 
+  printf(BSTR "set_dcy_ramp                  " UBSTR " enabled|disabled 1|2|4|8 (dcy stemp) 0.0625|0.125|0.25|0.5|1|2|4|8 (s dcy ramp rate) 1|2|3|4 (dcy threshold)\n"); 
 
-  printf(BSTR "get_tach                   " UBSTR "\n"); 
-  printf(BSTR "get_local_temp_low_res     " UBSTR "\n"); 
-  printf(BSTR "get_remote_temp_low_res    " UBSTR "\n"); 
+  printf(BSTR "get_status1                   " UBSTR "\n"); 
+  printf(BSTR "get_status2                   " UBSTR "\n"); 
 
-  printf(BSTR "exit                       " UBSTR "\n"); 
+  printf(BSTR "get_local_temp_low_res        " UBSTR "\n"); 
+  printf(BSTR "get_remote_temp_low_res       " UBSTR "\n"); 
+  printf(BSTR "get_local_remote_temp_high_res" UBSTR "\n"); 
+  printf(BSTR "get_remote_temp_high_res      " UBSTR "\n"); 
+  printf(BSTR "get_tach                      " UBSTR "\n"); 
+
+  printf(BSTR "exit                          " UBSTR "\n"); 
   return 0;
 }
 
@@ -592,10 +597,25 @@ int config_set_dcy_ramp(struct amc6821_config* config)
   return 0;
 }
 
-CONFIG_RO_GET_FUNCT(tach, uint16_t, tach);
+CONFIG_RO_GET_FUNCT(status1, uint8_t, status1);
+CONFIG_RO_GET_FUNCT(status2, uint8_t, status2);
+
 CONFIG_RO_GET_FUNCT(local_temp_low_res, int8_t, temp_low_res);
 CONFIG_RO_GET_FUNCT(remote_temp_low_res, int8_t, temp_low_res);
+CONFIG_RO_GET_FUNCT(remote_temp_high_res, int16_t, temp_high_res);
+CONFIG_RO_GET_FUNCT(tach, uint16_t, tach);
 
+int config_get_local_remote_temp_high_res(struct amc6821_config* config) {
+  int ret;
+  int16_t data[2];
+  if((ret=amc6821_load_local_remote_temp_high_res(&config->dev, data))) return ret;
+  printf("get_local_temp_high_res: ");
+  temp_high_res_print(data, stdout);
+  printf("\nget_remote_temp_high_res: ");
+  temp_high_res_print(data+1, stdout);
+  printf("\n");
+  return 0;
+}
 int config_exit(struct amc6821_config* config)
 {
   return CONFIG_EXIT_RET;
@@ -624,9 +644,14 @@ void config_ht_populate(struct amc6821_config* config)
   HT_GET_SET_FUNCTS(remote_temp_fan_control);
   HT_GET_SET_FUNCTS(dcy_ramp);
 
-  HT_GET_FUNCT(tach);
+  HT_GET_FUNCT(status1);
+  HT_GET_FUNCT(status2);
+
   HT_GET_FUNCT(local_temp_low_res);
   HT_GET_FUNCT(remote_temp_low_res);
+  HT_GET_FUNCT(local_remote_temp_high_res);
+  HT_GET_FUNCT(remote_temp_high_res);
+  HT_GET_FUNCT(tach);
 
   HT_SET_FUNCT(exit);
 }

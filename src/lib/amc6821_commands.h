@@ -78,7 +78,13 @@ AMC_RW_REG_FUNCTS(local_temp_fan_control	,AMC_LOCAL_TEMP_FAN_CONTROL	,1,	AMC_FAN
 AMC_RW_REG_FUNCTS(remote_temp_fan_control	,AMC_REMOTE_TEMP_FAN_CONTROL	,1,	AMC_FAN_CONTROL_DTYPE)
 AMC_RW_REG_FUNCTS(dcy_ramp			,AMC_DCY_RAMP			,1,	AMC_DCY_RAMP_DTYPE)
 
-AMC_RO_REG_FUNCTS(tach				,AMC_TACH_DATA_LBYTE		,2,	AMC_UINT16_DTYPE)
+AMC_RO_REG_FUNCTS(status1			,AMC_STATUS1			,1,	AMC_UINT8_DTYPE)
+AMC_RO_REG_FUNCTS(status2			,AMC_STATUS2			,1, 	AMC_UINT8_DTYPE)
+
 AMC_RO_REG_FUNCTS(local_temp_low_res		,AMC_LOCAL_TEMP_DATA_HBYTE	,1,	AMC_TEMP_LOW_RES_DTYPE)
 AMC_RO_REG_FUNCTS(remote_temp_low_res		,AMC_REMOTE_TEMP_DATA_HBYTE	,1,	AMC_TEMP_LOW_RES_DTYPE)
+AMC_RO_REG_FUNCTS(tach				,AMC_TACH_DATA_LBYTE		,2,	AMC_UINT16_DTYPE)
+
+int amc6821_load_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data);
+int amc6821_load_local_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data);
 #endif
