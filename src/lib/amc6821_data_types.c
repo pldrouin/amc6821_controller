@@ -567,19 +567,19 @@ int fan_control_fmt(void const* const data, char* str, const size_t len)
   switch(fcd->slope) {
 
     case fan_control_slope_2_dcy_per_C:
-      return snprintf(str, len, "%u C low temperature, 2 dcy/C slope", fcd->low_temp);
+      return snprintf(str, len, "%u C low temperature,2 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_4_dcy_per_C:
-      return snprintf(str, len, "%u C low temperature, 4 dcy/C slope", fcd->low_temp);
+      return snprintf(str, len, "%u C low temperature,4 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_8_dcy_per_C:
-      return snprintf(str, len, "%u C low temperature, 8 dcy/C slope", fcd->low_temp);
+      return snprintf(str, len, "%u C low temperature,8 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_16_dcy_per_C:
-      return snprintf(str, len, "%u C low temperature, 16 dcy/C slope", fcd->low_temp);
+      return snprintf(str, len, "%u C low temperature,16 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_32_dcy_per_C:
-      return snprintf(str, len, "%u C low temperature, 32 dcy/C slope", fcd->low_temp);
+      return snprintf(str, len, "%u C low temperature,32 dcy/C slope", fcd->low_temp);
   }
   return 0;
 }
@@ -591,19 +591,19 @@ int fan_control_print(void const* const data, FILE* stream)
   switch(fcd->slope) {
 
     case fan_control_slope_2_dcy_per_C:
-      return fprintf(stream, "%u C low temperature, 2 dcy/C slope", fcd->low_temp);
+      return fprintf(stream, "%u C low temperature,2 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_4_dcy_per_C:
-      return fprintf(stream, "%u C low temperature, 4 dcy/C slope", fcd->low_temp);
+      return fprintf(stream, "%u C low temperature,4 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_8_dcy_per_C:
-      return fprintf(stream, "%u C low temperature, 8 dcy/C slope", fcd->low_temp);
+      return fprintf(stream, "%u C low temperature,8 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_16_dcy_per_C:
-      return fprintf(stream, "%u C low temperature, 16 dcy/C slope", fcd->low_temp);
+      return fprintf(stream, "%u C low temperature,16 dcy/C slope", fcd->low_temp);
 
     case fan_control_slope_32_dcy_per_C:
-      return fprintf(stream, "%u C low temperature, 32 dcy/C slope", fcd->low_temp);
+      return fprintf(stream, "%u C low temperature,32 dcy/C slope", fcd->low_temp);
   }
   return 0;
 }

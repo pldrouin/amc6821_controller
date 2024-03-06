@@ -324,7 +324,7 @@ int config_mux_open(struct amc6821_config* config)
   free(device);
 
   if(ret) {
-    fprintf(stderr, "Error: amc6821_open (%i)\n", ret);
+    fprintf(stderr, "Error: amc6821_mux_open (%i)\n", ret);
     return -10;
   }
   return 0;
