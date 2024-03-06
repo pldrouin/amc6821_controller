@@ -34,9 +34,9 @@ int _amc6821_rw_multiple_regs_restore(struct amc6821_device* dev, const uint8_t 
 #define AMC_RW_REG_LOAD_ORIGINAL_FUNCT_1(reg_id, data, dtype) _amc6821_rw_single_reg_load_original(dev, reg_id ## _REG, reg_id ## _RW_IDX, data, dtype ## _IDX)
 #define AMC_RW_REG_LOAD_ORIGINAL_FUNCT_2(reg_id, data, dtype) _amc6821_rw_multiple_regs_load_original(dev, reg_id ## _REG, reg_id ## _RW_IDX, 2, data, dtype ## _IDX)
 #define AMC_RW_REG_STORE_FUNCT_1(reg_id, data, dtype) _amc6821_w_single_reg_store(dev, reg_id ## _REG, data, dtype ## _IDX)
-#define AMC_RW_REG_STORE_FUNCT_2(reg_id, data, dtype) _amc6821_w_multregs_store(dev, reg_id ## _REG, 2, data, dtype ## _IDX)
+#define AMC_RW_REG_STORE_FUNCT_2(reg_id, data, dtype) _amc6821_w_multiple_regs_store(dev, reg_id ## _REG, 2, data, dtype ## _IDX)
 #define AMC_RW_REG_RESTORE_FUNCT_1(reg_id) _amc6821_rw_single_reg_restore(dev, reg_id ## _REG, reg_id ## _RW_IDX)
-#define AMC_RW_REG_RESTORE_FUNCT_2(reg_id) _amc6821_rw_multregs_restore(dev, reg_id ## _REG, reg_id ## _RW_IDX, 2)
+#define AMC_RW_REG_RESTORE_FUNCT_2(reg_id) _amc6821_rw_multiple_regs_restore(dev, reg_id ## _REG, reg_id ## _RW_IDX, 2)
 #define AMC_RW_REG_FUNCTS(funct_id, reg_id, nbytes, dtype) \
 inline static int amc6821_load_ ## funct_id(struct amc6821_device* dev, dtype ## _DECODED *const data) {\
       return AMC_RW_REG_LOAD_FUNCT_ ## nbytes(reg_id, data, dtype);\
@@ -72,19 +72,36 @@ AMC_RW_REG_FUNCTS(conf2				,AMC_CONF2			,1, 	AMC_UINT8_DTYPE)
 AMC_RW_REG_FUNCTS(conf3				,AMC_CONF3			,1, 	AMC_UINT8_DTYPE)
 AMC_RW_REG_FUNCTS(conf4				,AMC_CONF4			,1, 	AMC_UINT8_DTYPE)
 
-AMC_RW_REG_FUNCTS(dcy				,AMC_DCY			,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(local_high_temp_limit		,AMC_LOCAL_HIGH_TEMP_LIMIT	,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(local_low_temp_limit		,AMC_LOCAL_LOW_TEMP_LIMIT	,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(local_therm_limit		,AMC_LOCAL_THERM_LIMIT		,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(local_crit_limit		,AMC_LOCAL_CRIT_LIMIT		,1,	AMC_UINT8_DTYPE)
+
+AMC_RW_REG_FUNCTS(remote_high_temp_limit	,AMC_REMOTE_HIGH_TEMP_LIMIT	,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(remote_low_temp_limit		,AMC_REMOTE_LOW_TEMP_LIMIT	,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(remote_therm_limit		,AMC_REMOTE_THERM_LIMIT		,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(remote_crit_limit		,AMC_REMOTE_CRIT_LIMIT		,1,	AMC_UINT8_DTYPE)
+
+AMC_RW_REG_FUNCTS(psv_temp			,AMC_PSV_TEMP			,1,	AMC_UINT5_DTYPE)
+
+AMC_RW_REG_FUNCTS(fan_characteristics		,AMC_FAN_CHARACTERISTICS	,1,	AMC_FAN_CHARACTERISTICS_DTYPE)
 AMC_RW_REG_FUNCTS(dcy_low_temp			,AMC_DCY_LOW_TEMP		,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(dcy				,AMC_DCY			,1,	AMC_UINT8_DTYPE)
+AMC_RW_REG_FUNCTS(dcy_ramp			,AMC_DCY_RAMP			,1,	AMC_DCY_RAMP_DTYPE)
 AMC_RW_REG_FUNCTS(local_temp_fan_control	,AMC_LOCAL_TEMP_FAN_CONTROL	,1,	AMC_FAN_CONTROL_DTYPE)
 AMC_RW_REG_FUNCTS(remote_temp_fan_control	,AMC_REMOTE_TEMP_FAN_CONTROL	,1,	AMC_FAN_CONTROL_DTYPE)
-AMC_RW_REG_FUNCTS(dcy_ramp			,AMC_DCY_RAMP			,1,	AMC_DCY_RAMP_DTYPE)
+
+AMC_RW_REG_FUNCTS(tach_low_limit		,AMC_TACH_LOW_LIMIT_LBYTE	,2,	AMC_TACH_DTYPE)
+AMC_RW_REG_FUNCTS(tach_high_limit		,AMC_TACH_HIGH_LIMIT_LBYTE	,2,	AMC_TACH_DTYPE)
+AMC_RW_REG_FUNCTS(tach_setting			,AMC_TACH_SETTING_LBYTE		,2,	AMC_TACH_DTYPE)
 
 AMC_RO_REG_FUNCTS(status1			,AMC_STATUS1			,1,	AMC_UINT8_DTYPE)
 AMC_RO_REG_FUNCTS(status2			,AMC_STATUS2			,1, 	AMC_UINT8_DTYPE)
 
 AMC_RO_REG_FUNCTS(local_temp_low_res		,AMC_LOCAL_TEMP_DATA_HBYTE	,1,	AMC_TEMP_LOW_RES_DTYPE)
 AMC_RO_REG_FUNCTS(remote_temp_low_res		,AMC_REMOTE_TEMP_DATA_HBYTE	,1,	AMC_TEMP_LOW_RES_DTYPE)
-AMC_RO_REG_FUNCTS(tach				,AMC_TACH_DATA_LBYTE		,2,	AMC_UINT16_DTYPE)
+AMC_RO_REG_FUNCTS(tach				,AMC_TACH_DATA_LBYTE		,2,	AMC_TACH_DTYPE)
 
-int amc6821_load_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data);
-int amc6821_load_local_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data);
+int amc6821_load_remote_temp_high_res(struct amc6821_device* dev, uint16_t *const data);
+int amc6821_load_local_remote_temp_high_res(struct amc6821_device* dev, uint16_t *const data);
 #endif

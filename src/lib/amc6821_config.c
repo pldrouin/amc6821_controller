@@ -74,11 +74,38 @@ int config_help(struct amc6821_config* config)
   printf(BSTR "get_conf4                     " UBSTR "\n"); 
   printf(BSTR "modify_conf4                  " UBSTR " [[NO_]PULSE_NUMBER],[[NO_]TACH_FAST],[[NO_]OVR_PIN_EN]\n"); 
 
-  printf(BSTR "get_dcy                       " UBSTR "\n"); 
-  printf(BSTR "set_dcy                       " UBSTR " 0-255\n"); 
+  printf(BSTR "get_local_high_temp_limit     " UBSTR "\n"); 
+  printf(BSTR "set_local_high_temp_limit     " UBSTR " 0-255 (C)\n"); 
+  printf(BSTR "get_local_low_temp_limit      " UBSTR "\n"); 
+  printf(BSTR "set_local_low_temp_limit      " UBSTR " 0-255 (C)\n"); 
+  printf(BSTR "get_local_therm_limit         " UBSTR "\n"); 
+  printf(BSTR "set_local_therm_limit         " UBSTR " 0-255 (C)\n"); 
+  printf(BSTR "get_local_crit_limit          " UBSTR "\n"); 
+  printf(BSTR "set_local_crit_limit          " UBSTR " 0-255 (C)\n"); 
+
+  printf(BSTR "get_remote_high_temp_limit    " UBSTR "\n"); 
+  printf(BSTR "set_remote_high_temp_limit    " UBSTR " 0-255 (C)\n"); 
+  printf(BSTR "get_remote_low_temp_limit     " UBSTR "\n"); 
+  printf(BSTR "set_remote_low_temp_limit     " UBSTR " 0-255 (C)\n"); 
+  printf(BSTR "get_remote_therm_limit        " UBSTR "\n"); 
+  printf(BSTR "set_remote_therm_limit        " UBSTR " 0-255 (C)\n"); 
+  printf(BSTR "get_remote_crit_limit         " UBSTR "\n"); 
+  printf(BSTR "set_remote_crit_limit         " UBSTR " 0-255 (C)\n"); 
+
+  printf(BSTR "get_psv_temp                  " UBSTR "\n"); 
+  printf(BSTR "set_psv_temp                  " UBSTR " 0-31  (C)\n"); 
+
+  printf(BSTR "get_fan_characteristics       " UBSTR "\n"); 
+  printf(BSTR "set_fan_characteristics       " UBSTR " fan_spin_disabled|fan_spin_enabled 0-7 (PWM freq setting) 0.2|0.4|0.6|0.8|1|2|4|8 (s spin-up time)\n"); 
 
   printf(BSTR "get_dcy_low_temp              " UBSTR "\n"); 
   printf(BSTR "set_dcy_low_temp              " UBSTR " 0-255\n"); 
+
+  printf(BSTR "get_dcy                       " UBSTR "\n"); 
+  printf(BSTR "set_dcy                       " UBSTR " 0-255\n"); 
+
+  printf(BSTR "get_dcy_ramp                  " UBSTR "\n"); 
+  printf(BSTR "set_dcy_ramp                  " UBSTR " enabled|disabled 1|2|4|8 (dcy stemp) 0.0625|0.125|0.25|0.5|1|2|4|8 (s dcy ramp rate) 1|2|3|4 (dcy threshold)\n"); 
 
   printf(BSTR "get_local_temp_fan_control    " UBSTR "\n"); 
   printf(BSTR "set_local_temp_fan_control    " UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
@@ -86,8 +113,14 @@ int config_help(struct amc6821_config* config)
   printf(BSTR "get_remote_temp_fan_control   " UBSTR "\n"); 
   printf(BSTR "set_remote_temp_fan_control   " UBSTR " 0-124 (low temp C) 2|4|8|16|32 (dcy/C slope)\n"); 
 
-  printf(BSTR "get_dcy_ramp                  " UBSTR "\n"); 
-  printf(BSTR "set_dcy_ramp                  " UBSTR " enabled|disabled 1|2|4|8 (dcy stemp) 0.0625|0.125|0.25|0.5|1|2|4|8 (s dcy ramp rate) 1|2|3|4 (dcy threshold)\n"); 
+  printf(BSTR "get_tach_low_limit   	     " UBSTR "\n"); 
+  printf(BSTR "set_tach_low_limit            " UBSTR " 92-65535 (RPM)\n"); 
+
+  printf(BSTR "get_tach_high_limit   	     " UBSTR "\n"); 
+  printf(BSTR "set_tach_high_limit           " UBSTR " 92-65535 (RPM)\n"); 
+
+  printf(BSTR "get_tach_setting   	     " UBSTR "\n"); 
+  printf(BSTR "set_tach_setting              " UBSTR " 92-65535 (RPM)\n"); 
 
   printf(BSTR "get_status1                   " UBSTR "\n"); 
   printf(BSTR "get_status2                   " UBSTR "\n"); 
@@ -364,7 +397,191 @@ int config_modify_conf4(struct amc6821_config* config)
   return _config_modify_conf(config, 3, amc6821_load_conf4, amc6821_store_conf4);
 }
 
-CONFIG_RW_GET_RESTORE_FUNCTS(dcy, uint8_t, uint8);
+int _config_set_temp(struct amc6821_config* config, const char* functname, int (*store_funct)(struct amc6821_device*, uint8_t *const))
+{
+  uint8_t temp;
+  int ret;
+
+  if(getnextparam(&config->a_h,true,config->pbuf,AMC_PBUF_SIZE)<0) {
+    fprintf(stderr,"%s: Error: Missing temperature value!\n",functname);
+    return -1;
+  }
+
+  if(sscanf(config->pbuf, "%" SCNu8, &temp) != 1) {
+    fprintf(stderr,"%s: Error: Temperature value '%s' is invalid!\n",functname,config->pbuf);
+    return -2;
+  }
+
+  if((ret=store_funct(&config->dev, &temp))) {
+    fprintf(stderr, "Error: amc6821_store (%i)\n", ret);
+    return -3;
+  }
+  return 0;
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(local_high_temp_limit, uint8_t, temp_low_res);
+
+int config_set_local_high_temp_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_local_high_temp_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(local_low_temp_limit, uint8_t, temp_low_res);
+
+int config_set_local_low_temp_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_local_low_temp_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(local_therm_limit, uint8_t, temp_low_res);
+
+int config_set_local_therm_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_local_therm_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(local_crit_limit, uint8_t, temp_low_res);
+
+int config_set_local_crit_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_local_crit_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(remote_high_temp_limit, uint8_t, temp_low_res);
+
+int config_set_remote_high_temp_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_remote_high_temp_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(remote_low_temp_limit, uint8_t, temp_low_res);
+
+int config_set_remote_low_temp_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_remote_low_temp_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(remote_therm_limit, uint8_t, temp_low_res);
+
+int config_set_remote_therm_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_remote_therm_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(remote_crit_limit, uint8_t, temp_low_res);
+
+int config_set_remote_crit_limit(struct amc6821_config* config)
+{
+  return _config_set_temp(config, CFUNCTSTR, amc6821_store_remote_crit_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(psv_temp, uint8_t, temp_low_res);
+
+int config_set_psv_temp(struct amc6821_config* config)
+{
+  uint8_t temp;
+  int ret;
+
+  if(getnextparam(&config->a_h,true,config->pbuf,AMC_PBUF_SIZE)<0) {
+    fprintf(stderr,"%s: Error: Missing temperature value!\n",CFUNCTSTR);
+    return -1;
+  }
+
+  if(sscanf(config->pbuf, "%" SCNu8, &temp) != 1) {
+    fprintf(stderr,"%s: Error: Temperature value '%s' is invalid!\n",CFUNCTSTR,config->pbuf);
+    return -2;
+  }
+
+  if(temp&0b11100000) {
+    fprintf(stderr,"%s: Error: Temperature value %u is not in the 0-31 C range!\n",CFUNCTSTR,temp);
+    return -3;
+  }
+
+  if((ret=amc6821_store_psv_temp(&config->dev, &temp))) {
+    fprintf(stderr, "Error: amc6821_store (%i)\n", ret);
+    return -4;
+  }
+  return 0;
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(fan_characteristics, struct fan_characteristics_data, fan_characteristics);
+
+int config_set_fan_characteristics(struct amc6821_config* config)
+{
+  struct fan_characteristics_data fcd;
+  float fbuf;
+  int ret;
+
+  if(getnextparam(&config->a_h,true,config->pbuf,AMC_PBUF_SIZE)<0) {
+    fprintf(stderr,"%s: Error: fan_spin_disabled/fan_spin_enabled status is missing!\n",CFUNCTSTR);
+    return -1;
+  }
+
+  if(!argsdiffer(config->pbuf, "fan_spin_disabled")) fcd.fan_spin_disabled=true;
+
+  else if(!argsdiffer(config->pbuf, "fan_spin_enabled")) fcd.fan_spin_disabled=false;
+
+  else {
+    fprintf(stderr,"%s: Error: Status '%s' is invalid!\n",CFUNCTSTR,config->pbuf);
+    return -2;
+  }
+
+  if(getnextparam(&config->a_h,true,config->pbuf,AMC_PBUF_SIZE)<0) {
+    fprintf(stderr,"%s: Error: PWM freq setting value is missing!\n",CFUNCTSTR);
+    return -3;
+  }
+
+  if(sscanf(config->pbuf, "%" SCNu8, &fcd.pwm_freq) != 1) {
+    fprintf(stderr,"%s: Error: Step value '%s' is invalid!\n",CFUNCTSTR,config->pbuf);
+    return -4;
+  }
+
+  if(getnextparam(&config->a_h,true,config->pbuf,AMC_PBUF_SIZE)<0) {
+    fprintf(stderr,"%s: Error: Spin-up time value is missing!\n",CFUNCTSTR);
+    return -5;
+  }
+
+  if(sscanf(config->pbuf, "%f", &fbuf) != 1 || (int)(fbuf*5) != fbuf*5) {
+    fprintf(stderr,"%s: Error: Spin-up time value '%s' is invalid!\n",CFUNCTSTR,config->pbuf);
+    return -6;
+  }
+
+  switch((int)(fbuf*5)) {
+    case 1:
+      fcd.spin_up_time=spin_up_time_0_2_s;
+      break;
+    case 2:
+      fcd.spin_up_time=spin_up_time_0_4_s;
+      break;
+    case 3:
+      fcd.spin_up_time=spin_up_time_0_6_s;
+      break;
+    case 4:
+      fcd.spin_up_time=spin_up_time_0_8_s;
+      break;
+    case 5:
+      fcd.spin_up_time=spin_up_time_1_s;
+      break;
+    case 10:
+      fcd.spin_up_time=spin_up_time_2_s;
+      break;
+    case 20:
+      fcd.spin_up_time=spin_up_time_4_s;
+      break;
+    case 40:
+      fcd.spin_up_time=spin_up_time_8_s;
+      break;
+    default:
+      fprintf(stderr,"%s: Error: Spin-up time value '%f' is invalid!\n",CFUNCTSTR,fbuf);
+      return -7;
+  }
+
+  if((ret=amc6821_store_fan_characteristics(&config->dev, &fcd))) {
+    fprintf(stderr, "Error: amc6821_store (%i)\n", ret);
+    return -8;
+  }
+  return 0;
+}
 
 int _config_set_dcy(struct amc6821_config* config, const char* functname, int (*store_funct)(struct amc6821_device*, uint8_t *const))
 {
@@ -385,13 +602,7 @@ int _config_set_dcy(struct amc6821_config* config, const char* functname, int (*
     fprintf(stderr, "Error: amc6821_store (%i)\n", ret);
     return -3;
   }
-
   return 0;
-}
-
-int config_set_dcy(struct amc6821_config* config)
-{
-  return _config_set_dcy(config, CFUNCTSTR, amc6821_store_dcy);
 }
 
 CONFIG_RW_GET_RESTORE_FUNCTS(dcy_low_temp, uint8_t, uint8);
@@ -399,6 +610,61 @@ CONFIG_RW_GET_RESTORE_FUNCTS(dcy_low_temp, uint8_t, uint8);
 int config_set_dcy_low_temp(struct amc6821_config* config)
 {
   return _config_set_dcy(config, CFUNCTSTR, amc6821_store_dcy_low_temp);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(dcy, uint8_t, uint8);
+
+int config_set_dcy(struct amc6821_config* config)
+{
+  return _config_set_dcy(config, CFUNCTSTR, amc6821_store_dcy);
+}
+
+int _config_set_tach(struct amc6821_config* config, const char* functname, int (*store_funct)(struct amc6821_device*, uint16_t *const))
+{
+  uint16_t tach;
+  int ret;
+
+  if(getnextparam(&config->a_h,true,config->pbuf,AMC_PBUF_SIZE)<0) {
+    fprintf(stderr,"%s: Error: Missing tach RPM value!\n",functname);
+    return -1;
+  }
+
+  if(sscanf(config->pbuf, "%" SCNu16, &tach) != 1) {
+    fprintf(stderr,"%s: Error: Tach RPM value '%s' is invalid!\n",functname,config->pbuf);
+    return -2;
+  }
+
+  if(tach < TACH_LOW_LIMIT) {
+    fprintf(stderr,"%s: Error: %u RPM is smaller than the allowed minimum value of %u RPM!\n",functname,tach,TACH_LOW_LIMIT);
+    return -3;
+  }
+
+  if((ret=store_funct(&config->dev, &tach))) {
+    fprintf(stderr, "Error: amc6821_store (%i)\n", ret);
+    return -3;
+  }
+  return 0;
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(tach_low_limit, uint16_t, tach);
+
+int config_set_tach_low_limit(struct amc6821_config* config)
+{
+  return _config_set_tach(config, CFUNCTSTR, amc6821_store_tach_low_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(tach_high_limit, uint16_t, tach);
+
+int config_set_tach_high_limit(struct amc6821_config* config)
+{
+  return _config_set_tach(config, CFUNCTSTR, amc6821_store_tach_high_limit);
+}
+
+CONFIG_RW_GET_RESTORE_FUNCTS(tach_setting, uint16_t, tach);
+
+int config_set_tach_setting(struct amc6821_config* config)
+{
+  return _config_set_tach(config, CFUNCTSTR, amc6821_store_tach_setting);
 }
 
 int _config_set_fan_control(struct amc6821_config* config, const char* functname, int (*store_funct)(struct amc6821_device*, struct fan_control_data *const))
@@ -452,7 +718,6 @@ int _config_set_fan_control(struct amc6821_config* config, const char* functname
     fprintf(stderr, "Error: amc6821_store (%i)\n", ret);
     return -3;
   }
-
   return 0;
 }
 
@@ -539,7 +804,7 @@ int config_set_dcy_ramp(struct amc6821_config* config)
       drd.rate=dcy_ramp_rate_1_8_s;
       break;
     case 4:
-      drd.rate= dcy_ramp_rate_1_4_s;
+      drd.rate=dcy_ramp_rate_1_4_s;
       break;
     case 8:
       drd.rate=dcy_ramp_rate_1_2_s;
@@ -593,21 +858,20 @@ int config_set_dcy_ramp(struct amc6821_config* config)
     fprintf(stderr, "Error: amc6821_store (%i)\n", ret);
     return -12;
   }
-
   return 0;
 }
 
 CONFIG_RO_GET_FUNCT(status1, uint8_t, status1);
 CONFIG_RO_GET_FUNCT(status2, uint8_t, status2);
 
-CONFIG_RO_GET_FUNCT(local_temp_low_res, int8_t, temp_low_res);
-CONFIG_RO_GET_FUNCT(remote_temp_low_res, int8_t, temp_low_res);
-CONFIG_RO_GET_FUNCT(remote_temp_high_res, int16_t, temp_high_res);
+CONFIG_RO_GET_FUNCT(local_temp_low_res, uint8_t, temp_low_res);
+CONFIG_RO_GET_FUNCT(remote_temp_low_res, uint8_t, temp_low_res);
+CONFIG_RO_GET_FUNCT(remote_temp_high_res, uint16_t, temp_high_res);
 CONFIG_RO_GET_FUNCT(tach, uint16_t, tach);
 
 int config_get_local_remote_temp_high_res(struct amc6821_config* config) {
   int ret;
-  int16_t data[2];
+  uint16_t data[2];
   if((ret=amc6821_load_local_remote_temp_high_res(&config->dev, data))) return ret;
   printf("get_local_temp_high_res: ");
   temp_high_res_print(data, stdout);
@@ -616,6 +880,7 @@ int config_get_local_remote_temp_high_res(struct amc6821_config* config) {
   printf("\n");
   return 0;
 }
+
 int config_exit(struct amc6821_config* config)
 {
   return CONFIG_EXIT_RET;
@@ -638,11 +903,27 @@ void config_ht_populate(struct amc6821_config* config)
   HT_GET_MOD_FUNCTS(conf3);
   HT_GET_MOD_FUNCTS(conf4);
 
-  HT_GET_SET_FUNCTS(dcy);
+  HT_GET_SET_FUNCTS(local_high_temp_limit);
+  HT_GET_SET_FUNCTS(local_low_temp_limit);
+  HT_GET_SET_FUNCTS(local_therm_limit);
+  HT_GET_SET_FUNCTS(local_crit_limit);
+
+  HT_GET_SET_FUNCTS(remote_high_temp_limit);
+  HT_GET_SET_FUNCTS(remote_low_temp_limit);
+  HT_GET_SET_FUNCTS(remote_therm_limit);
+  HT_GET_SET_FUNCTS(remote_crit_limit);
+
+  HT_GET_SET_FUNCTS(psv_temp);
+
+  HT_GET_SET_FUNCTS(fan_characteristics);
   HT_GET_SET_FUNCTS(dcy_low_temp);
+  HT_GET_SET_FUNCTS(dcy);
+  HT_GET_SET_FUNCTS(dcy_ramp);
   HT_GET_SET_FUNCTS(local_temp_fan_control);
   HT_GET_SET_FUNCTS(remote_temp_fan_control);
-  HT_GET_SET_FUNCTS(dcy_ramp);
+  HT_GET_SET_FUNCTS(tach_low_limit);
+  HT_GET_SET_FUNCTS(tach_high_limit);
+  HT_GET_SET_FUNCTS(tach_setting);
 
   HT_GET_FUNCT(status1);
   HT_GET_FUNCT(status2);
@@ -768,13 +1049,13 @@ int amc6821_config(struct amc6821_config* config, int nargs, const char** args)
       if(cfunct) {
 
 	if(cfunct(config)) {
-	  fprintf(stderr,"%s: Error: Invalid command!\n",CFUNCTSTR);
+	  fprintf(stderr,"%s: Command returned an error!\n",__func__);
 	  config_clear(config);
 	  return 1;
 	}
 
       } else {
-	fprintf(stderr,"%s: Error: Unknown parameter: '%s'\n",CFUNCTSTR,config->pbuf);
+	fprintf(stderr,"%s: Error: Invalid command!\n",__func__);
 	config_clear(config);
 	return 1;
       }

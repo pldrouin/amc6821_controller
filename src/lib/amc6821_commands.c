@@ -135,7 +135,7 @@ int _amc6821_ro_multiple_regs_load(struct amc6821_device* dev, const uint8_t reg
   return 0;
 }
 
-int amc6821_load_local_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data)
+int amc6821_load_local_remote_temp_high_res(struct amc6821_device* dev, uint16_t *const data)
 {
   int ret;
   uint8_t cur_regs[2];
@@ -150,7 +150,7 @@ int amc6821_load_local_remote_temp_high_res(struct amc6821_device* dev, int16_t 
   return 0;
 }
 
-int amc6821_load_remote_temp_high_res(struct amc6821_device* dev, int16_t *const data)
+int amc6821_load_remote_temp_high_res(struct amc6821_device* dev, uint16_t *const data)
 {
   int ret;
   uint8_t cur_regs[2];

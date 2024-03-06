@@ -5,6 +5,18 @@
 #define AMC_DTYPE_RO_DEFINE(id) {NULL, id ## _get}
 #define AMC_BIT(byte, bit) ((byte>>bit)&1)
 
+int uint5_set(uint8_t* const regs, void const* const data)
+{
+  CHECK_UINT5(*(uint8_t const*)data);
+  *regs = *(uint8_t const*)data;
+  return 0;
+}
+
+void uint5_get(uint8_t const* const regs, void* const data)
+{
+  *(uint8_t*)data = *regs;
+}
+
 int uint8_set(uint8_t* const regs, void const* const data)
 {
   *regs = *(uint8_t const*)data;
@@ -84,17 +96,17 @@ int conf1_fmt(void const* const data, char* str, const size_t len)
 
 int conf1_print(void const* const data, FILE* stream)
 {
-  uint8_bin_print(data, stream);
+  int ret=uint8_bin_print(data, stream);
 
-  if(AMC_BIT(*(uint8_t*)data, THERM_INT_EN)) fprintf(stream, ",THERM_INT_EN");
-  if(AMC_BIT(*(uint8_t*)data, FDRC1)) fprintf(stream, ",FDRC1");
-  if(AMC_BIT(*(uint8_t*)data, FDRC0)) fprintf(stream, ",FDRC0");
-  if(AMC_BIT(*(uint8_t*)data, FAN_FAULT_EN)) fprintf(stream, ",FAN_FAULT_EN");
-  if(AMC_BIT(*(uint8_t*)data, PWM_INVERT)) fprintf(stream, ",PWM_INVERT");
-  if(AMC_BIT(*(uint8_t*)data, RPM_INT_EN)) fprintf(stream, ",RPM_INT_EN");
-  if(AMC_BIT(*(uint8_t*)data, GLOBAL_INT_EN)) fprintf(stream, ",GLOBAL_INT_EN");
-  if(AMC_BIT(*(uint8_t*)data, START_MONITOR)) fprintf(stream, ",START_MONITOR");
-  return 0;
+  if(AMC_BIT(*(uint8_t*)data, THERM_INT_EN)) ret+=fprintf(stream, ",THERM_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, FDRC1)) ret+=fprintf(stream, ",FDRC1");
+  if(AMC_BIT(*(uint8_t*)data, FDRC0)) ret+=fprintf(stream, ",FDRC0");
+  if(AMC_BIT(*(uint8_t*)data, FAN_FAULT_EN)) ret+=fprintf(stream, ",FAN_FAULT_EN");
+  if(AMC_BIT(*(uint8_t*)data, PWM_INVERT)) ret+=fprintf(stream, ",PWM_INVERT");
+  if(AMC_BIT(*(uint8_t*)data, RPM_INT_EN)) ret+=fprintf(stream, ",RPM_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, GLOBAL_INT_EN)) ret+=fprintf(stream, ",GLOBAL_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, START_MONITOR)) ret+=fprintf(stream, ",START_MONITOR");
+  return ret;
 }
 
 int conf2_fmt(void const* const data, char* str, const size_t len)
@@ -114,17 +126,17 @@ int conf2_fmt(void const* const data, char* str, const size_t len)
 
 int conf2_print(void const* const data, FILE* stream)
 {
-  uint8_bin_print(data, stream);
+  int ret=uint8_bin_print(data, stream);
 
-  if(AMC_BIT(*(uint8_t*)data, RESET)) fprintf(stream, ",RESET");
-  if(AMC_BIT(*(uint8_t*)data, LPSV_INT_EN)) fprintf(stream, ",LPSV_INT_EN");
-  if(AMC_BIT(*(uint8_t*)data, RT_INT_EN)) fprintf(stream, ",RT_INT_EN");
-  if(AMC_BIT(*(uint8_t*)data, LT_INT_EN)) fprintf(stream, ",LT_INT_EN");
-  if(AMC_BIT(*(uint8_t*)data, REMOTE_FAIL_INT_EN)) fprintf(stream, ",REMOTE_FAIL_INT_EN");
-  if(AMC_BIT(*(uint8_t*)data, TACH_EN)) fprintf(stream, ",TACH_EN");
-  if(AMC_BIT(*(uint8_t*)data, TACH_MODE)) fprintf(stream, ",TACH_MODE");
-  if(AMC_BIT(*(uint8_t*)data, PWM_OUT_EN)) fprintf(stream, ",PWM_OUT_EN");
-  return 0;
+  if(AMC_BIT(*(uint8_t*)data, RESET)) ret+=fprintf(stream, ",RESET");
+  if(AMC_BIT(*(uint8_t*)data, LPSV_INT_EN)) ret+=fprintf(stream, ",LPSV_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, RT_INT_EN)) ret+=fprintf(stream, ",RT_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, LT_INT_EN)) ret+=fprintf(stream, ",LT_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, REMOTE_FAIL_INT_EN)) ret+=fprintf(stream, ",REMOTE_FAIL_INT_EN");
+  if(AMC_BIT(*(uint8_t*)data, TACH_EN)) ret+=fprintf(stream, ",TACH_EN");
+  if(AMC_BIT(*(uint8_t*)data, TACH_MODE)) ret+=fprintf(stream, ",TACH_MODE");
+  if(AMC_BIT(*(uint8_t*)data, PWM_OUT_EN)) ret+=fprintf(stream, ",PWM_OUT_EN");
+  return ret;
 }
 
 int conf3_fmt(void const* const data, char* str, const size_t len)
@@ -137,10 +149,10 @@ int conf3_fmt(void const* const data, char* str, const size_t len)
 
 int conf3_print(void const* const data, FILE* stream)
 {
-  uint8_bin_print(data, stream);
+  int ret=uint8_bin_print(data, stream);
 
-  if(AMC_BIT(*(uint8_t*)data, THERM_FAN_EN)) fprintf(stream, ",THERM_FAN_EN");
-  return 0;
+  if(AMC_BIT(*(uint8_t*)data, THERM_FAN_EN)) ret+=fprintf(stream, ",THERM_FAN_EN");
+  return ret;
 }
 
 int conf4_fmt(void const* const data, char* str, const size_t len)
@@ -155,12 +167,12 @@ int conf4_fmt(void const* const data, char* str, const size_t len)
 
 int conf4_print(void const* const data, FILE* stream)
 {
-  uint8_bin_print(data, stream);
+  int ret=uint8_bin_print(data, stream);
 
-  if(AMC_BIT(*(uint8_t*)data, PULSE_NUMBER)) fprintf(stream, ",PULSE_NUMBER");
-  if(AMC_BIT(*(uint8_t*)data, TACH_FAST)) fprintf(stream, ",TACH_FAST");
-  if(AMC_BIT(*(uint8_t*)data, OVR_PIN_EN)) fprintf(stream, ",OVR_PIN_EN");
-  return 0;
+  if(AMC_BIT(*(uint8_t*)data, PULSE_NUMBER)) ret+=fprintf(stream, ",PULSE_NUMBER");
+  if(AMC_BIT(*(uint8_t*)data, TACH_FAST)) ret+=fprintf(stream, ",TACH_FAST");
+  if(AMC_BIT(*(uint8_t*)data, OVR_PIN_EN)) ret+=fprintf(stream, ",OVR_PIN_EN");
+  return ret;
 }
 
 int status1_fmt(void const* const data, char* str, const size_t len)
@@ -180,17 +192,17 @@ int status1_fmt(void const* const data, char* str, const size_t len)
 
 int status1_print(void const* const data, FILE* stream)
 {
-  uint8_bin_print(data, stream);
+  int ret=uint8_bin_print(data, stream);
 
-  if(AMC_BIT(*(uint8_t*)data, LT_LOW)) fprintf(stream, ",LT_LOW");
-  if(AMC_BIT(*(uint8_t*)data, LT_HIGH)) fprintf(stream, ",LT_HIGH");
-  if(AMC_BIT(*(uint8_t*)data, RT_FAIL)) fprintf(stream, ",RT_FAIL");
-  if(AMC_BIT(*(uint8_t*)data, RT_OVER_THERM)) fprintf(stream, ",RT_OVER_THERM");
-  if(AMC_BIT(*(uint8_t*)data, RT_LOW)) fprintf(stream, ",RT_LOW");
-  if(AMC_BIT(*(uint8_t*)data, RT_HIGH)) fprintf(stream, ",RT_HIGH");
-  if(AMC_BIT(*(uint8_t*)data, FAN_SLOW)) fprintf(stream, ",FAN_SLOW");
-  if(AMC_BIT(*(uint8_t*)data, FAN_FAST)) fprintf(stream, ",FAN_FAST");
-  return 0;
+  if(AMC_BIT(*(uint8_t*)data, LT_LOW)) ret+=fprintf(stream, ",LT_LOW");
+  if(AMC_BIT(*(uint8_t*)data, LT_HIGH)) ret+=fprintf(stream, ",LT_HIGH");
+  if(AMC_BIT(*(uint8_t*)data, RT_FAIL)) ret+=fprintf(stream, ",RT_FAIL");
+  if(AMC_BIT(*(uint8_t*)data, RT_OVER_THERM)) ret+=fprintf(stream, ",RT_OVER_THERM");
+  if(AMC_BIT(*(uint8_t*)data, RT_LOW)) ret+=fprintf(stream, ",RT_LOW");
+  if(AMC_BIT(*(uint8_t*)data, RT_HIGH)) ret+=fprintf(stream, ",RT_HIGH");
+  if(AMC_BIT(*(uint8_t*)data, FAN_SLOW)) ret+=fprintf(stream, ",FAN_SLOW");
+  if(AMC_BIT(*(uint8_t*)data, FAN_FAST)) ret+=fprintf(stream, ",FAN_FAST");
+  return ret;
 }
 
 int status2_fmt(void const* const data, char* str, const size_t len)
@@ -207,14 +219,330 @@ int status2_fmt(void const* const data, char* str, const size_t len)
 
 int status2_print(void const* const data, FILE* stream)
 {
-  uint8_bin_print(data, stream);
+  int ret=uint8_bin_print(data, stream);
 
-  if(AMC_BIT(*(uint8_t*)data, THERM_INPUT)) fprintf(stream, ",THERM_INPUT");
-  if(AMC_BIT(*(uint8_t*)data, LT_OVER_THERM)) fprintf(stream, ",LT_OVER_THERM");
-  if(AMC_BIT(*(uint8_t*)data, LT_BELOW_THERM)) fprintf(stream, ",LT_BELOW_THERM");
-  if(AMC_BIT(*(uint8_t*)data, LT_OVER_CRIT)) fprintf(stream, ",LT_OVER_CRIT");
-  if(AMC_BIT(*(uint8_t*)data, RT_OVER_CRIT)) fprintf(stream, ",RT_OVER_CRIT");
+  if(AMC_BIT(*(uint8_t*)data, THERM_INPUT)) ret+=fprintf(stream, ",THERM_INPUT");
+  if(AMC_BIT(*(uint8_t*)data, LT_OVER_THERM)) ret+=fprintf(stream, ",LT_OVER_THERM");
+  if(AMC_BIT(*(uint8_t*)data, LT_BELOW_THERM)) ret+=fprintf(stream, ",LT_BELOW_THERM");
+  if(AMC_BIT(*(uint8_t*)data, LT_OVER_CRIT)) ret+=fprintf(stream, ",LT_OVER_CRIT");
+  if(AMC_BIT(*(uint8_t*)data, RT_OVER_CRIT)) ret+=fprintf(stream, ",RT_OVER_CRIT");
+  return ret;
+}
+
+int fan_characteristics_set(uint8_t* const regs, void const* const data)
+{
+  struct fan_characteristics_data const* const fcd = (struct fan_characteristics_data const*)data;
+  CHECK_PWM_FREQ_SETTING(fcd->pwm_freq);
+  CHECK_SPIN_UP_TIME_SETTING(fcd->spin_up_time);
+  *regs = ((fcd->fan_spin_disabled)<<7)|((fcd->pwm_freq)<<3)|fcd->spin_up_time;
   return 0;
+}
+
+void fan_characteristics_get(uint8_t const* const regs, void* const data)
+{
+  struct fan_characteristics_data* const fcd = (struct fan_characteristics_data* const)data;
+  fcd->fan_spin_disabled = (*regs)>>7;
+  fcd->pwm_freq = ((*regs)>>3)&0b111;
+  fcd->spin_up_time = (*regs)&0b111;
+}
+
+int fan_characteristics_fmt(void const* const data, char* str, const size_t len)
+{
+  struct fan_characteristics_data const* const fcd = (struct fan_characteristics_data const*)data;
+  int ret;
+
+  if(fcd->fan_spin_disabled) ret=snprintf(str, len, "fan_spin_disabled,");
+
+  else ret=snprintf(str, len, "fan_spin_enabled,");
+
+  if(ret<len) ret+=snprintf(str+ret, len-ret, "%u PWM frequency setting,", fcd->pwm_freq);
+
+  if(ret<len) {
+
+    switch(fcd->spin_up_time) {
+
+      case spin_up_time_0_2_s:
+	ret+=snprintf(str+ret, len-ret, "0.2 s spin-up time,");
+	break;
+
+      case spin_up_time_0_4_s:
+	ret+=snprintf(str+ret, len-ret, "0.4 s spin-up time,");
+	break;
+
+      case spin_up_time_0_6_s:
+	ret+=snprintf(str+ret, len-ret, "0.6 s spin-up time,");
+	break;
+
+      case spin_up_time_0_8_s:
+	ret+=snprintf(str+ret, len-ret, "0.8 s spin-up time,");
+	break;
+
+      case spin_up_time_1_s:
+	ret+=snprintf(str+ret, len-ret, "1 s spin-up time,");
+	break;
+
+      case spin_up_time_2_s:
+	ret+=snprintf(str+ret, len-ret, "2 s spin-up time,");
+	break;
+
+      case spin_up_time_4_s:
+	ret+=snprintf(str+ret, len-ret, "4 s spin-up time,");
+	break;
+
+      case spin_up_time_8_s:
+	ret+=snprintf(str+ret, len-ret, "8 s spin-up time,");
+	break;
+    }
+  }
+  return ret;
+}
+
+int fan_characteristics_print(void const* const data, FILE* stream)
+{
+  struct fan_characteristics_data const* const fcd = (struct fan_characteristics_data const*)data;
+  int ret;
+
+  if(fcd->fan_spin_disabled) ret=fprintf(stream, "fan_spin_disabled,");
+
+  else ret=fprintf(stream, "fan_spin_enabled,");
+
+  ret+=fprintf(stream, "%u PWM frequency setting,", fcd->pwm_freq);
+
+  switch(fcd->spin_up_time) {
+
+    case spin_up_time_0_2_s:
+      ret+=fprintf(stream, "0.2 s spin-up time,");
+      break;
+
+    case spin_up_time_0_4_s:
+      ret+=fprintf(stream, "0.4 s spin-up time,");
+      break;
+
+    case spin_up_time_0_6_s:
+      ret+=fprintf(stream, "0.6 s spin-up time,");
+      break;
+
+    case spin_up_time_0_8_s:
+      ret+=fprintf(stream, "0.8 s spin-up time,");
+      break;
+
+    case spin_up_time_1_s:
+      ret+=fprintf(stream, "1 s spin-up time,");
+      break;
+
+    case spin_up_time_2_s:
+      ret+=fprintf(stream, "2 s spin-up time,");
+      break;
+
+    case spin_up_time_4_s:
+      ret+=fprintf(stream, "4 s spin-up time,");
+      break;
+
+    case spin_up_time_8_s:
+      ret+=fprintf(stream, "8 s spin-up time,");
+      break;
+  }
+  return ret;
+}
+
+int dcy_ramp_set(uint8_t* const regs, void const* const data)
+{
+  struct dcy_ramp_data const* const drd = (struct dcy_ramp_data const*)data;
+  CHECK_DCY_RAMP_STEP(drd->step);
+  CHECK_DCY_RAMP_RATE(drd->rate);
+  CHECK_DCY_RAMP_THRESHOLD(drd->threshold);
+  *regs = ((drd->enabled)<<7)|((drd->step)<<5)|((drd->rate)<<2)|drd->threshold;
+  return 0;
+}
+
+void dcy_ramp_get(uint8_t const* const regs, void* const data)
+{
+  struct dcy_ramp_data* const drd = (struct dcy_ramp_data* const)data;
+  drd->enabled = (*regs)>>7;
+  drd->step = ((*regs)>>5)&0b11;
+  drd->rate = ((*regs)>>2)&0b111;
+  drd->threshold = (*regs)&0b11;
+}
+
+int dcy_ramp_fmt(void const* const data, char* str, const size_t len)
+{
+  struct dcy_ramp_data const* const drd = (struct dcy_ramp_data const*)data;
+  int ret;
+
+  if(drd->enabled) ret=snprintf(str, len, "enabled,");
+
+  else ret=snprintf(str, len, "disabled,");
+
+  if(ret<len) {
+
+    switch(drd->step) {
+
+      case dcy_ramp_step_1_dcy:
+	ret+=snprintf(str+ret, len-ret, "1 dcy step,");
+	break;
+
+      case dcy_ramp_step_2_dcy:
+	ret+=snprintf(str+ret, len-ret, "2 dcy step,");
+	break;
+
+      case dcy_ramp_step_4_dcy:
+	ret+=snprintf(str+ret, len-ret, "4 dcy step,");
+	break;
+
+      case dcy_ramp_step_8_dcy:
+	ret+=snprintf(str+ret, len-ret, "8 dcy step,");
+	break;
+    }
+  }
+
+  if(ret<len) {
+
+    switch(drd->rate) {
+
+      case dcy_ramp_rate_1_16_s:
+	ret+=snprintf(str+ret, len-ret, "0.0625 s rate,");
+	break;
+
+      case dcy_ramp_rate_1_8_s:
+	ret+=snprintf(str+ret, len-ret, "0.125 s rate,");
+	break;
+
+      case dcy_ramp_rate_1_4_s:
+	ret+=snprintf(str+ret, len-ret, "0.25 s rate,");
+	break;
+
+      case dcy_ramp_rate_1_2_s:
+	ret+=snprintf(str+ret, len-ret, "0.5 s rate,");
+	break;
+
+      case dcy_ramp_rate_1_s:
+	ret+=snprintf(str+ret, len-ret, "1 s rate,");
+	break;
+
+      case dcy_ramp_rate_2_s:
+	ret+=snprintf(str+ret, len-ret, "2 s rate,");
+	break;
+
+      case dcy_ramp_rate_4_s:
+	ret+=snprintf(str+ret, len-ret, "4 s rate,");
+	break;
+
+      case dcy_ramp_rate_8_s:
+	ret+=snprintf(str+ret, len-ret, "8 s rate,");
+	break;
+    }
+  }
+
+  if(ret<len) {
+
+    switch(drd->threshold) {
+
+      case dcy_ramp_thresh_1_dcy:
+	ret+=snprintf(str+ret, len-ret, "1 dcy threshold");
+	break;
+
+      case dcy_ramp_thresh_2_dcy:
+	ret+=snprintf(str+ret, len-ret, "2 dcy threshold");
+	break;
+
+      case dcy_ramp_thresh_3_dcy:
+	ret+=snprintf(str+ret, len-ret, "3 dcy threshold");
+	break;
+
+      case dcy_ramp_thresh_4_dcy:
+	ret+=snprintf(str+ret, len-ret, "4 dcy threshold");
+	break;
+    }
+  }
+  return ret;
+}
+
+int dcy_ramp_print(void const* const data, FILE* stream)
+{
+  struct dcy_ramp_data const* const drd = (struct dcy_ramp_data const*)data;
+  int ret;
+
+  switch(drd->enabled) {
+    case true:
+      ret=fprintf(stream, "enabled,");
+      break;
+    case false:
+      ret=fprintf(stream, "disabled,");
+  }
+
+  switch(drd->step) {
+
+    case dcy_ramp_step_1_dcy:
+      ret+=fprintf(stream, "1 dcy step,");
+      break;
+
+    case dcy_ramp_step_2_dcy:
+      ret+=fprintf(stream, "2 dcy step,");
+      break;
+
+    case dcy_ramp_step_4_dcy:
+      ret+=fprintf(stream, "4 dcy step,");
+      break;
+
+    case dcy_ramp_step_8_dcy:
+      ret+=fprintf(stream, "8 dcy step,");
+      break;
+  }
+
+  switch(drd->rate) {
+
+    case dcy_ramp_rate_1_16_s:
+      ret+=fprintf(stream, "0.0625 s rate,");
+      break;
+
+    case dcy_ramp_rate_1_8_s:
+      ret+=fprintf(stream, "0.125 s rate,");
+      break;
+
+    case dcy_ramp_rate_1_4_s:
+      ret+=fprintf(stream, "0.25 s rate,");
+      break;
+
+    case dcy_ramp_rate_1_2_s:
+      ret+=fprintf(stream, "0.5 s rate,");
+      break;
+
+    case dcy_ramp_rate_1_s:
+      ret+=fprintf(stream, "1 s rate,");
+      break;
+
+    case dcy_ramp_rate_2_s:
+      ret+=fprintf(stream, "2 s rate,");
+      break;
+
+    case dcy_ramp_rate_4_s:
+      ret+=fprintf(stream, "4 s rate,");
+      break;
+
+    case dcy_ramp_rate_8_s:
+      ret+=fprintf(stream, "8 s rate,");
+      break;
+  }
+
+  switch(drd->threshold) {
+
+    case dcy_ramp_thresh_1_dcy:
+      ret+=fprintf(stream, "1 dcy threshold");
+      break;
+
+    case dcy_ramp_thresh_2_dcy:
+      ret+=fprintf(stream, "2 dcy threshold");
+      break;
+
+    case dcy_ramp_thresh_3_dcy:
+      ret+=fprintf(stream, "3 dcy threshold");
+      break;
+
+    case dcy_ramp_thresh_4_dcy:
+      ret+=fprintf(stream, "4 dcy threshold");
+      break;
+  }
+  return ret;
 }
 
 int fan_control_set(uint8_t* const regs, void const* const data)
@@ -280,262 +608,66 @@ int fan_control_print(void const* const data, FILE* stream)
   return 0;
 }
 
-int dcy_ramp_set(uint8_t* const regs, void const* const data)
-{
-  struct dcy_ramp_data const* const drd = (struct dcy_ramp_data const*)data;
-  CHECK_DCY_RAMP_STEP(drd->step);
-  CHECK_DCY_RAMP_RATE(drd->rate);
-  CHECK_DCY_RAMP_THRESHOLD(drd->threshold);
-  *regs = ((drd->enabled)<<7)|((drd->step)<<5)|((drd->rate)<<2)|drd->threshold;
-  return 0;
-}
-
-void dcy_ramp_get(uint8_t const* const regs, void* const data)
-{
-  struct dcy_ramp_data* const drd = (struct dcy_ramp_data* const)data;
-  drd->enabled = (*regs)>>7;
-  drd->step = ((*regs)>>5)&0b11;
-  drd->rate = ((*regs)>>2)&0b111;
-  drd->threshold = (*regs)&0b11;
-}
-
-int dcy_ramp_fmt(void const* const data, char* str, const size_t len)
-{
-  struct dcy_ramp_data const* const drd = (struct dcy_ramp_data const*)data;
-  int ret;
-
-  if(drd->enabled) ret=snprintf(str, len, "enabled, ");
-
-  else ret=snprintf(str, len, "disabled, ");
-
-  if(ret<len) {
-
-    switch(drd->step) {
-
-      case dcy_ramp_step_1_dcy:
-	ret+=snprintf(str+ret, len-ret, "1 dcy step, ");
-	break;
-
-      case dcy_ramp_step_2_dcy:
-	ret+=snprintf(str+ret, len-ret, "2 dcy step, ");
-	break;
-
-      case dcy_ramp_step_4_dcy:
-	ret+=snprintf(str+ret, len-ret, "4 dcy step, ");
-	break;
-
-      case dcy_ramp_step_8_dcy:
-	ret+=snprintf(str+ret, len-ret, "8 dcy step, ");
-	break;
-    }
-  }
-
-  if(ret<len) {
-
-    switch(drd->rate) {
-
-      case dcy_ramp_rate_1_16_s:
-	ret+=snprintf(str+ret, len-ret, "0.0625 s rate, ");
-	break;
-
-      case dcy_ramp_rate_1_8_s:
-	ret+=snprintf(str+ret, len-ret, "0.125 s rate, ");
-	break;
-
-      case dcy_ramp_rate_1_4_s:
-	ret+=snprintf(str+ret, len-ret, "0.25 s rate, ");
-	break;
-
-      case dcy_ramp_rate_1_2_s:
-	ret+=snprintf(str+ret, len-ret, "0.5 s rate, ");
-	break;
-
-      case dcy_ramp_rate_1_s:
-	ret+=snprintf(str+ret, len-ret, "1 s rate, ");
-	break;
-
-      case dcy_ramp_rate_2_s:
-	ret+=snprintf(str+ret, len-ret, "2 s rate, ");
-	break;
-
-      case dcy_ramp_rate_4_s:
-	ret+=snprintf(str+ret, len-ret, "4 s rate, ");
-	break;
-
-      case dcy_ramp_rate_8_s:
-	ret+=snprintf(str+ret, len-ret, "8 s rate, ");
-	break;
-    }
-  }
-
-  if(ret<len) {
-
-    switch(drd->threshold) {
-
-      case dcy_ramp_thresh_1_dcy:
-	ret+=snprintf(str+ret, len-ret, "1 dcy threshold");
-	break;
-
-      case dcy_ramp_thresh_2_dcy:
-	ret+=snprintf(str+ret, len-ret, "2 dcy threshold");
-	break;
-
-      case dcy_ramp_thresh_3_dcy:
-	ret+=snprintf(str+ret, len-ret, "3 dcy threshold");
-	break;
-
-      case dcy_ramp_thresh_4_dcy:
-	ret+=snprintf(str+ret, len-ret, "4 dcy threshold");
-	break;
-    }
-  }
-  return ret;
-}
-
-int dcy_ramp_print(void const* const data, FILE* stream)
-{
-  struct dcy_ramp_data const* const drd = (struct dcy_ramp_data const*)data;
-  int ret;
-
-  switch(drd->enabled) {
-    case true:
-      ret=fprintf(stream, "enabled, ");
-      break;
-    case false:
-      ret=fprintf(stream, "disabled, ");
-  }
-
-  switch(drd->step) {
-
-    case dcy_ramp_step_1_dcy:
-      ret+=fprintf(stream, "1 dcy step, ");
-      break;
-
-    case dcy_ramp_step_2_dcy:
-      ret+=fprintf(stream, "2 dcy step, ");
-      break;
-
-    case dcy_ramp_step_4_dcy:
-      ret+=fprintf(stream, "4 dcy step, ");
-      break;
-
-    case dcy_ramp_step_8_dcy:
-      ret+=fprintf(stream, "8 dcy step, ");
-      break;
-  }
-
-  switch(drd->rate) {
-
-    case dcy_ramp_rate_1_16_s:
-      ret+=fprintf(stream, "0.0625 s rate, ");
-      break;
-
-    case dcy_ramp_rate_1_8_s:
-      ret+=fprintf(stream, "0.125 s rate, ");
-      break;
-
-    case dcy_ramp_rate_1_4_s:
-      ret+=fprintf(stream, "0.25 s rate, ");
-      break;
-
-    case dcy_ramp_rate_1_2_s:
-      ret+=fprintf(stream, "0.5 s rate, ");
-      break;
-
-    case dcy_ramp_rate_1_s:
-      ret+=fprintf(stream, "1 s rate, ");
-      break;
-
-    case dcy_ramp_rate_2_s:
-      ret+=fprintf(stream, "2 s rate, ");
-      break;
-
-    case dcy_ramp_rate_4_s:
-      ret+=fprintf(stream, "4 s rate, ");
-      break;
-
-    case dcy_ramp_rate_8_s:
-      ret+=fprintf(stream, "8 s rate, ");
-      break;
-  }
-
-  switch(drd->threshold) {
-
-    case dcy_ramp_thresh_1_dcy:
-      ret+=fprintf(stream, "1 dcy threshold");
-      break;
-
-    case dcy_ramp_thresh_2_dcy:
-      ret+=fprintf(stream, "2 dcy threshold");
-      break;
-
-    case dcy_ramp_thresh_3_dcy:
-      ret+=fprintf(stream, "3 dcy threshold");
-      break;
-
-    case dcy_ramp_thresh_4_dcy:
-      ret+=fprintf(stream, "4 dcy threshold");
-      break;
-  }
-  return ret;
-}
-
 int tach_set(uint8_t* const regs, void const* const data)
 {
-  *(uint16_t*)regs = htole16((uint16_t)(6e6/ *(float const*)data + 0.5));
+  CHECK_TACH(*(uint16_t const*)data);
+  *(uint16_t*)regs = htole16((uint16_t)(6e6/ *(uint16_t const*)data + 0.5));
   return 0;
 }
 
 void tach_get(uint8_t const* const regs, void* const data)
 {
-  *(uint16_t*)data = le16toh(*(uint16_t const*)regs);
+  *(uint16_t*)data = (uint16_t)(6e6/le16toh(*(uint16_t const*)regs) + 0.5);
 }
 
 int tach_fmt(void const* const data, char* str, const size_t len)
 {
-  return snprintf(str, len, "%i", (int)(6e6/ *(const uint16_t*)data + 0.5));
+  return snprintf(str, len, "%" PRIu16 " RPM", *(const uint16_t*)data);
 }
 
 int tach_print(void const* const data, FILE* stream)
 {
-  return fprintf(stream, "%i", (int)(6e6/ *(const uint16_t*)data + 0.5));
+  return fprintf(stream, "%" PRIu16 " RPM", *(const uint16_t*)data);
 }
 
 int temp_low_res_fmt(void const* const data, char* str, const size_t len)
 {
-  return snprintf(str, len, "%"PRIi8" C", *(int8_t const*)data);
+  return snprintf(str, len, "%"PRIu8" C", *(uint8_t const*)data);
 }
 
 int temp_low_res_print(void const* const data, FILE* stream)
 {
-  return fprintf(stream, "%"PRIi8" C", *(int8_t const*)data);
+  return fprintf(stream, "%"PRIu8" C", *(uint8_t const*)data);
 }
 
 void remote_temp_high_res_get(uint8_t const* const regs, void* const data)
 {
-  *(uint16_t*)data = (((int16_t)regs[1])<<3) | ((regs[0]>>REMOTE_TEMP_LBITS)&0b111);
+  *(uint16_t*)data = (((uint16_t)regs[1])<<3) | ((regs[0]>>REMOTE_TEMP_LBITS)&0b111);
 }
 
 void local_temp_high_res_get(uint8_t const* const regs, void* const data)
 {
-  *(uint16_t*)data = (((int16_t)regs[1])<<3) | ((regs[0]>>LOCAL_TEMP_LBITS)&0b111);
+  *(uint16_t*)data = (((uint16_t)regs[1])<<3) | ((regs[0]>>LOCAL_TEMP_LBITS)&0b111);
 }
 
 int temp_high_res_fmt(void const* const data, char* str, const size_t len)
 {
-  return snprintf(str, len, "%.3f C", *(int16_t const*)data/8.);
+  return snprintf(str, len, "%.3f C", *(uint16_t const*)data/8.);
 }
 
 int temp_high_res_print(void const* const data, FILE* stream)
 {
-  return fprintf(stream, "%.3f C", *(int16_t const*)data/8.);
+  return fprintf(stream, "%.3f C", *(uint16_t const*)data/8.);
 }
 
 const struct amc_dtype amc_dtypes[AMC_NDTYPES]={
+  AMC_DTYPE_DEFINE(uint5),  			//AMC_UINT5_DTYPE
   AMC_DTYPE_DEFINE(uint8),  			//AMC_UINT8_DTYPE
   AMC_DTYPE_DEFINE(uint16),			//AMC_UINT16_DTYPE
-  AMC_DTYPE_DEFINE(fan_control),		//AMC_FAN_CONTROL_DTYPE
+  AMC_DTYPE_DEFINE(fan_characteristics),	//AMC_FAN_CHARACTERISTICS_DTYPE
   AMC_DTYPE_DEFINE(dcy_ramp),			//AMC_DCY_RAMP_DTYPE
+  AMC_DTYPE_DEFINE(fan_control),		//AMC_FAN_CONTROL_DTYPE
+  AMC_DTYPE_DEFINE(tach),			//AMC_TACH_DTYPE
   AMC_DTYPE_DEFINE(uint8),			//AMC_TEMP_LOW_RES_DTYPE
   AMC_DTYPE_RO_DEFINE(remote_temp_high_res),	//AMC_REMOTE_TEMP_HIGH_RES_DTYPE
   AMC_DTYPE_RO_DEFINE(local_temp_high_res),	//AMC_LOCAL_TEMP_HIGH_RES_DTYPE
