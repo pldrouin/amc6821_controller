@@ -1055,7 +1055,7 @@ int amc6821_config(struct amc6821_config* config, int nargs, const char** args)
 	}
 
       } else {
-	fprintf(stderr,"%s: Error: Invalid command!\n",__func__);
+	fprintf(stderr,"%s: Error: Invalid command: '%s'\n",__func__,config->pbuf);
 	config_clear(config);
 	return 1;
       }

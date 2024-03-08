@@ -5,8 +5,8 @@
 
 #include "i2c.h"
 
-#define DEBUG_PRINT(...) fprintf(stderr, __VA_ARGS__)
-//#define DEBUG_PRINT(...)
+//#define DEBUG_PRINT(...) fprintf(stderr, __VA_ARGS__)
+#define DEBUG_PRINT(...)
 
 int i2c_init(struct amc6821_iic* iic)
 {
