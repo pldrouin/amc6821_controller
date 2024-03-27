@@ -1,5 +1,6 @@
 # amc6821_controller
-Utility to interact with an AMC6821 Fan Controller through I2C
+Utility to interact with an AMC6821 Fan Controller through I2C. This fan controller is notably
+used by LX2160A system (e.g. SolidRun HoneyComb LX2 system).
 
 Depends on https://github.com/pldrouin/libht and
 https://github.com/pldrouin/libargs .
